@@ -1,59 +1,60 @@
-import Header from './Header';
-import Footer from './Footer';
 import Home from './Home';
 import Packages from './Packages';
 import Login from './Login';
 
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import Services from './Services';
 import Registration from './Registration';
 import AboutUs from './AboutUs';
-import styled from 'styled-components';
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: stretch;
-`;
+import Dashboard from './Dashboard';
+import WebPageOutlet from './WebPageOutlet';
+import DashboardOutlet from './DashboardOutlet';
 
 function Root() {
   return (
-    <Router>
-      <Container>
-        <Header />
-
-        <Route exact path="/">
+    <>
+      <Route exact path="/app/dashboard">
+        <DashboardOutlet>
+          <Dashboard />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/">
+        <WebPageOutlet>
           <Home />
-        </Route>
+        </WebPageOutlet>
+      </Route>
 
-        <Route exact path="/about_us">
+      <Route exact path="/about_us">
+        <WebPageOutlet>
           <AboutUs />
-        </Route>
+        </WebPageOutlet>
+      </Route>
 
-        <Route exact path="/services">
+      <Route exact path="/services">
+        <WebPageOutlet>
           <Services />
-        </Route>
+        </WebPageOutlet>
+      </Route>
 
-        <Route exact path="/packages">
+      <Route exact path="/packages">
+        <WebPageOutlet>
           <Packages />
-        </Route>
+        </WebPageOutlet>
+      </Route>
 
-        <Route exact path="/login">
+      <Route exact path="/login">
+        <WebPageOutlet>
           <Login />
-        </Route>
+        </WebPageOutlet>
+      </Route>
 
-        <Route exact path="/registration">
+      <Route exact path="/registration">
+        <WebPageOutlet>
           <Registration />
-        </Route>
-
-        <Footer />
-      </Container>
-    </Router>
+        </WebPageOutlet>
+      </Route>
+    </>
   );
 }
 

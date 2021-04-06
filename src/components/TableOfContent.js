@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import PageContentArea from './PageContentArea';
 import { ImSearch } from 'react-icons/im';
-import { H1 } from './Title';
+//import { H1 } from './Title';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -102,7 +102,7 @@ function TableOfContent({ title, headers, body, searchFilter }) {
   return (
     <PageContentArea>
       {/* TITLE */}
-      <H1 title={title}></H1>
+      {/*<H1 title={title}></H1>*/}
 
       {/* PAGINATION SELECT */}
       <TableControlContainer>

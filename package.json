@@ -12,6 +12,8 @@
     "bootstrap": "^4.6.0",
     "classnames": "^2.2.6",
     "jquery": "^3.6.0",
+    "mobx": "^6.1.8",
+    "mobx-react-lite": "^3.2.0",
     "popper.js": "^1.16.1",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
@@ -23,6 +25,7 @@
     "react-scripts": "4.0.3",
     "react-slideshow-image": "^3.4.3",
     "react-transition-group": "^4.4.1",
+    "recharts": "^2.0.9",
     "styled-components": "^5.2.3",
     "web-vitals": "^1.0.1"
   },

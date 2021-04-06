@@ -1,15 +1,13 @@
 import { Grid } from '@material-ui/core';
 import Card from 'react-bootstrap/Card';
 import CenterLayout from './CenterLayout';
-import { H1 } from './Title';
+//import { H1 } from './Title';
 
 function CardSet({ title, data }) {
   return (
     <Grid container justify="center">
       <Grid item xs={12}>
-        <CenterLayout>
-          <H1 title={title} />
-        </CenterLayout>
+        <CenterLayout>{/*<h1 title={title} />*/}</CenterLayout>
       </Grid>
       {data.map((card, index) => {
         return (
