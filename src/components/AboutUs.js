@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Grid } from '@material-ui/core';
 
 function AboutUs() {
-  console.log(backgroundImage);
   return (
     <PageContentArea backgroundImage={backgroundImage} opacity={0.7}>
       <Grid container justify="center">

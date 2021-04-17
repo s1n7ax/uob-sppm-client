@@ -17,8 +17,8 @@ const adminList = [
     icon: <DashboardIcon />,
   },
   {
-    text: 'Staff Management',
-    url: '/staff_management',
+    text: 'User Management',
+    url: '/user_management',
     icon: <ShoppingCartIcon />,
   },
   {
@@ -97,9 +97,7 @@ const createList = (list) => {
 };
 
 const MenuList = () => {
-  console.log('>>>>>>>>>>>>>>>>>>>');
   const store = useUserStore();
-  console.log(store);
 
   switch (store.role) {
     case 'admin':

@@ -10,11 +10,22 @@ import AboutUs from './AboutUs';
 import Dashboard from './Dashboard';
 import WebPageOutlet from './WebPageOutlet';
 import DashboardOutlet from './DashboardOutlet';
+import UserManagement from './UserManagement';
 
 function Root() {
   return (
     <>
-      <Route exact path="/app/dashboard">
+      <Route exact path="/dashboard">
+        <DashboardOutlet>
+          <Dashboard />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/user_management">
+        <DashboardOutlet>
+          <UserManagement />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/stock">
         <DashboardOutlet>
           <Dashboard />
         </DashboardOutlet>

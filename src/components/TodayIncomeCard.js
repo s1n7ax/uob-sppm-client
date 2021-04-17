@@ -1,13 +1,7 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
-import { useUserStore } from '../store/UserStore';
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 const useStyles = makeStyles({
   depositContext: {
@@ -15,9 +9,10 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Deposits() {
+export default function TodayIncome({ income }) {
+  income = income || 0;
+
   const classes = useStyles();
-  const user = useUserStore();
 
   const getTodayIncome = () => {
     var formatter = new Intl.NumberFormat('en-US', {
@@ -25,8 +20,14 @@ export default function Deposits() {
       currency: 'LKR',
     });
 
-    return formatter.format(3024);
+    return formatter.format(income);
   };
+
+  const todayStr = new Date().toLocaleDateString('en-US', {
+    day: '2-digit',
+    year: 'numeric',
+    month: 'long',
+  });
 
   return (
     <React.Fragment>
@@ -35,13 +36,8 @@ export default function Deposits() {
         {getTodayIncome()}
       </Typography>
       <Typography color="textSecondary" className={classes.depositContext}>
-        on 15 March, 2019
+        {`on ${todayStr}`}
       </Typography>
-      <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          View balance
-        </Link>
-      </div>
     </React.Fragment>
   );
 }

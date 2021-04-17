@@ -1,0 +1,26 @@
+{
+  "host": {
+    "url": "http://localhost:8080"
+  },
+  "login": {
+    "url": "/login"
+  },
+  "organization": {
+    "sales": {
+      "url": "/org/sales"
+    },
+    "employees": {
+      "url": "/org/employee"
+    },
+    "employee": {
+      "url": "/org/employee"
+    },
+		"branches": {
+			"url":"/org/branch"
+		},
+		"roles": {
+			"url":"/org/role"
+		}
+
+  }
+}

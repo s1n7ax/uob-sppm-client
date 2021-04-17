@@ -9,7 +9,6 @@ export const UserStoreProvider = ({ children }) => {
     role: 'admin',
 
     serUserDetails(username, role) {
-      console.log(this);
       store.username = username;
       store.role = role;
     },
