@@ -5,33 +5,32 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import EmployeeDialog from './EmployeeDialog';
-import { useEmployeeStore } from '../store/EmployeeStore';
+import CustomerDialog from './CustomerDialog';
+import { useCustomerStore } from '../store/CustomerStore';
 import { useRoleStore } from '../store/RoleStore';
 import { useBranchStore } from '../store/BranchStore';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateEmployee } from '../api/organization';
+import { updateCustomer } from '../api/organization';
 
-const EmployeeManagement = () => {
-  const empStore = useEmployeeStore();
+const CustomerManagement = () => {
+  const customerStore = useCustomerStore();
 
-  const createRow = (emp) => {
+  const createRow = (customer) => {
     return {
-      id: emp.id,
-      name: `${emp.user.firstName} ${emp.user.lastName}`,
-      username: emp.user.username,
-      active: emp.user.active.toString(),
-      branch: emp.branch.location,
+      id: customer.id,
+      name: `${customer.user.firstName} ${customer.user.lastName}`,
+      username: customer.user.username,
+      active: customer.user.active.toString(),
     };
   };
 
   return useObserver(() => (
     <>
       <TableOfContent
-        title="Employees"
+        title="Customers"
         headers={headers}
-        rows={empStore.employees.map((emp) => createRow(emp))}
+        rows={customerStore.customers.map((emp) => createRow(emp))}
         keyName="id"
         ActionBar={ActionBar}
       />
@@ -40,36 +39,39 @@ const EmployeeManagement = () => {
 };
 
 const ActionBar = ({ selected }) => {
-  const empStore = useEmployeeStore();
+  const customerStore = useCustomerStore();
+  const roleStore = useRoleStore();
 
-  const selectedItemsData = selected.map((id) => empStore.find(id));
+  const selectedItemsData = selected.map((id) => customerStore.find(id));
   const selectedCount = selected.length;
   const actions = [];
+  console.log('selected', selected);
+  console.log('selected data', selectedItemsData);
 
   if (selectedCount === 1) {
     actions.push(
-      <EmployeeEditAction key="edit_action" employee={selectedItemsData[0]} />
+      <CustomerEditAction key="edit_action" customer={selectedItemsData[0]} />
     );
   }
 
   if (selectedCount > 0) {
     actions.push(
-      <EmployeeChangeActiveAction
+      <CustomerChangeActiveAction
         activate={false}
         key="deactivate_action"
-        employees={selectedItemsData}
+        customers={selectedItemsData}
       />
     );
     actions.push(
-      <EmployeeChangeActiveAction
+      <CustomerChangeActiveAction
         activate={true}
         key="activate_action"
-        employees={selectedItemsData}
+        customers={selectedItemsData}
       />
     );
   }
 
-  actions.push(<EmployeeCreateAction key="create_action" />);
+  actions.push(<CustomerCreateAction key="create_action" />);
 
   return <>{actions}</>;
 };
@@ -79,13 +81,9 @@ const headers = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'username', numeric: false, disablePadding: false, label: 'Username' },
   { id: 'active', numeric: false, disablePadding: false, label: 'Active' },
-  { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
 ];
 
-const EmployeeEditAction = ({ employee }) => {
-  const roleStore = useRoleStore();
-  const branchStore = useBranchStore();
-
+const CustomerEditAction = ({ customer }) => {
   const [opened, setOpened] = useState(false);
 
   return (
@@ -97,11 +95,9 @@ const EmployeeEditAction = ({ employee }) => {
       </Tooltip>
 
       {opened && (
-        <EmployeeDialog
+        <CustomerDialog
           edit={true}
-          employee={employee}
-          branchList={branchStore.branches}
-          roleList={roleStore.roles.filter((role) => role.name !== 'CUSTOMER')}
+          customer={customer}
           isOpened={opened}
           closeWindow={() => setOpened(false)}
         />
@@ -110,11 +106,9 @@ const EmployeeEditAction = ({ employee }) => {
   );
 };
 
-const EmployeeCreateAction = () => {
-  const roleStore = useRoleStore();
-  const branchStore = useBranchStore();
-
+const CustomerCreateAction = () => {
   const [opened, setOpened] = useState(false);
+  const roleStore = useRoleStore();
 
   return (
     <>
@@ -125,10 +119,9 @@ const EmployeeCreateAction = () => {
       </Tooltip>
 
       {opened && (
-        <EmployeeDialog
+        <CustomerDialog
+          role={roleStore.findByName('CUSTOMER')}
           edit={false}
-          branchList={branchStore.branches}
-          roleList={roleStore.roles}
           isOpened={opened}
           closeWindow={() => setOpened(false)}
         />
@@ -137,14 +130,14 @@ const EmployeeCreateAction = () => {
   );
 };
 
-const EmployeeChangeActiveAction = ({ employees, activate = false }) => {
-  const employeeStore = useEmployeeStore();
+const CustomerChangeActiveAction = ({ customers, activate = false }) => {
+  const customerStore = useCustomerStore();
   const [opened, setOpened] = useState(false);
 
   const handleAccept = async () => {
     await Promise.all(
-      employees.map(async (emp) => {
-        await updateEmployee({
+      customers.map(async (emp) => {
+        await updateCustomer({
           ...emp,
           user: { ...emp.user, active: activate },
         });
@@ -152,7 +145,7 @@ const EmployeeChangeActiveAction = ({ employees, activate = false }) => {
     );
 
     setOpened(false);
-    employeeStore.refreshData();
+    customerStore.refreshData();
   };
 
   return (
@@ -169,12 +162,12 @@ const EmployeeChangeActiveAction = ({ employees, activate = false }) => {
       {opened && (
         <AcceptDialog
           opened={opened}
-          title="Deactivate Employee"
+          title="Deactivate Customer"
           description={
             <div>
-              <span>{`Do you want to deactivate following employees?`}</span>
+              <span>{`Do you want to deactivate following customers?`}</span>
               <ul>
-                {employees.map((emp) => (
+                {customers.map((emp) => (
                   <li key={emp.id}>
                     {`${emp.user.firstName} ${emp.user.lastName}`}
                   </li>
@@ -191,4 +184,4 @@ const EmployeeChangeActiveAction = ({ employees, activate = false }) => {
   );
 };
 
-export default EmployeeManagement;
+export default CustomerManagement;

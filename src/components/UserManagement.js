@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import EmployeeManagement from './EmployeeManagement';
+import CustomerManagement from './CustomerManagement';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -57,49 +58,6 @@ const UserManagement = () => {
     setValue(newValue);
   };
 
-  function createData(name, username, active, branch) {
-    return { name, username, active: active.toString(), branch };
-  }
-
-  const rows = [
-    createData('Srinesh Nisala', 'nisaal@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@gmail.com', true, 'Nugegoda'),
-    createData('Sample', 'sample@gmail.comdf', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisaal@gmail.comsdf', true, 'Nugegoda'),
-    createData('Test sample', 'test@gmail.comdf', true, 'Nugegoda'),
-    createData('Sample', 'sample@gmail.comfaa', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisaal@gmdail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@gmfail.com', true, 'Nugegoda'),
-    createData('Sample', 'sample@gmaidl.com', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisaal@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@dsgmail.com', true, 'Nugegoda'),
-    createData('Sample', 'samples@gmail.com', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisadal@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@dgmail.com', true, 'Nugegoda'),
-    createData('Sample', 'samplfe@gmail.com', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisaaal@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@gbmail.com', true, 'Nugegoda'),
-    createData('Sample', 'samaple@gmail.com', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nissaal@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'test@ddgmail.com', true, 'Nugegoda'),
-    createData('Sample', 'sampled@gmail.com', true, 'Nugegoda'),
-    createData('Srinesh Nisala', 'nisaaxl@gmail.com', true, 'Nugegoda'),
-    createData('Test sample', 'testsaa@gmail.com', true, 'Nugegoda'),
-    createData('Sample', 'sample@gssmail.com', true, 'Nugegoda'),
-  ];
-
-  const headers = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-    {
-      id: 'username',
-      numeric: false,
-      disablePadding: false,
-      label: 'Username',
-    },
-    { id: 'active', numeric: false, disablePadding: false, label: 'Active' },
-    { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
-  ];
-
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">
@@ -112,39 +70,15 @@ const UserManagement = () => {
           scrollButtons="auto"
           aria-label="scrollable auto tabs example"
         >
-          <Tab label="Staff" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-          <Tab label="Item Four" {...a11yProps(3)} />
-          <Tab label="Item Five" {...a11yProps(4)} />
-          <Tab label="Item Six" {...a11yProps(5)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
+          <Tab label="Employees" {...a11yProps(0)} />
+          <Tab label="Customers" {...a11yProps(1)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
         <EmployeeManagement />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        Item Four
-      </TabPanel>
-      <TabPanel value={value} index={4}>
-        Item Five
-      </TabPanel>
-      <TabPanel value={value} index={5}>
-        Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
+        <CustomerManagement />
       </TabPanel>
     </div>
   );

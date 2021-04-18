@@ -20,7 +20,9 @@
 		},
 		"roles": {
 			"url":"/org/role"
+		},
+		"customer": {
+			"url": "/org/customer"
 		}
-
   }
 }

@@ -54,3 +54,26 @@ export const deleteEmployee = async (empId) => {
     method: 'DELETE',
   });
 };
+
+export const getAllCustomers = async () => {
+  var url = new URL(org.customer.url, BASE_URL);
+  return fetch(url).then((res) => res.json());
+};
+
+export const createCustomer = async (customer) => {
+  var url = new URL(org.customer.url, BASE_URL);
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(customer),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+
+export const updateCustomer = async (customer) => {
+  var url = new URL(org.customer.url, BASE_URL);
+  return fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(customer),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};

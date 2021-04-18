@@ -9,13 +9,16 @@ import { UserStoreProvider } from './store/UserStore';
 import { EmployeeStoreProvider } from './store/EmployeeStore';
 import { RoleStoreProvider } from './store/RoleStore';
 import { BranchStoreProvider } from './store/BranchStore';
+import { CustomerStoreProvider } from './store/CustomerStore';
 
 const StoreProvider = ({ children }) => {
   return (
     <UserStoreProvider>
       <EmployeeStoreProvider>
         <RoleStoreProvider>
-          <BranchStoreProvider>{children}</BranchStoreProvider>
+          <CustomerStoreProvider>
+            <BranchStoreProvider>{children}</BranchStoreProvider>
+          </CustomerStoreProvider>
         </RoleStoreProvider>
       </EmployeeStoreProvider>
     </UserStoreProvider>

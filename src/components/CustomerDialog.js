@@ -9,23 +9,18 @@ import {
   InputAdornment,
   InputLabel,
   makeStyles,
-  MenuItem,
-  Select,
   TextField,
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
-import { updateEmployee, createEmployee } from '../api/organization';
+import { updateCustomer, createCustomer } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
-import { useBranchStore } from '../store/BranchStore';
-import { useEmployeeStore } from '../store/EmployeeStore';
-import { useRoleStore } from '../store/RoleStore';
+import { useCustomerStore } from '../store/CustomerStore';
 import {
   usernameValidation,
   passwordValidation,
   nameValidation,
-  nicValidation,
 } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
 
@@ -41,29 +36,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
-  if (edit && !employee)
-    throw new Error('Edit window require the employee data');
+const CustomerDialog = ({ edit, customer, role, ...args }) => {
+  if (edit && !customer)
+    throw new Error('Edit window require customer details');
 
-  const empStore = useEmployeeStore();
-  const roleStore = useRoleStore();
-  const branchStore = useBranchStore();
+  customer = customer || getCustomerJson(role);
 
-  employee = edit
-    ? employee
-    : getEmployeeJson(
-        branchStore.branches[0],
-        roleStore.findByName('EMPLOYEE')
-      );
-
-  const [username, setUsername] = useEVValueState(employee.user.username);
-  const [password, setPassword] = useState(employee.user.password);
-  const [firstName, setFirstName] = useEVValueState(employee.user.firstName);
-  const [lastName, setLastName] = useEVValueState(employee.user.lastName);
-  const [active, setActive] = useEVCheckedState(employee.user.active);
-  const [nic, setNIC] = useEVValueState(employee.nic);
-  const [branchId, setBranchId] = useEVValueState(employee.branch.id);
-  const [roleId, setRoleId] = useEVValueState(employee.user.roles[0].id);
+  const customerStore = useCustomerStore();
+  const [username, setUsername] = useEVValueState(customer.user.username);
+  const [password, setPassword] = useState(customer.user.password);
+  const [firstName, setFirstName] = useEVValueState(customer.user.firstName);
+  const [lastName, setLastName] = useEVValueState(customer.user.lastName);
+  const [active, setActive] = useEVCheckedState(customer.user.active);
 
   const classes = useStyles();
 
@@ -72,7 +56,6 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
     password: {},
     firstName: {},
     lastName: {},
-    nic: {},
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -94,19 +77,17 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
           : passwordValidation(password),
       firstName: nameValidation(firstName),
       lastName: nameValidation(lastName),
-      nic: nicValidation(nic),
     });
   }, [
     username,
     password,
     firstName,
     lastName,
-    nic,
     edit,
-    employee.user.username,
-    employee.user.password,
-    employee.user.firstName,
-    employee.user.lastName,
+    customer.user.username,
+    customer.user.password,
+    customer.user.firstName,
+    customer.user.lastName,
   ]);
 
   const hasErrors = () => {
@@ -115,34 +96,22 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
 
   const handleSave = () => {
     (async () => {
-      const updatedBranch = branchStore.find(branchId);
-      const updatedRole = roleStore.find(roleId);
-
-      const updatedEmp = {
-        ...employee,
-        nic,
+      const updatedCustomer = {
+        ...customer,
         user: {
-          ...employee.user,
+          ...customer.user,
           username,
           password,
           firstName,
           lastName,
           active,
-          roles: [updatedRole],
         },
-        branch: updatedBranch,
       };
 
-      try {
-        edit
-          ? await updateEmployee(updatedEmp)
-          : await createEmployee(updatedEmp);
-      } catch (e) {
-        console.log('>>>>>>>>>>>>>>>>>>>');
-        console.log(e);
-        console.log('>>>>>>>>>>>>>>>>>>>');
-      }
-      await empStore.refreshData();
+      edit
+        ? await updateCustomer(updatedCustomer)
+        : await createCustomer(updatedCustomer);
+      await customerStore.refreshData();
       args.closeWindow();
     })();
   };
@@ -156,7 +125,7 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
   };
 
   return (
-    <DialogWindow ActionBar={ActionBar} title="Edit Employee" {...args}>
+    <DialogWindow ActionBar={ActionBar} title="Edit Customer" {...args}>
       <form className={classes.root} noValidate autoComplete="off">
         <FormControl className={classes.formControl}>
           <TextField
@@ -225,37 +194,12 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
           />
         </FormControl>
 
-        <FormControl className={classes.formControlSingle}>
+        <FormControl className={classes.formControl}>
           <TextField
-            required
-            onChange={setNIC}
-            error={errors.nic.error}
-            helperText={errors.nic.helpText}
-            label="NIC"
-            defaultValue={nic}
+            disabled
+            label="Role"
+            defaultValue={customer.user.roles[0].name}
           />
-        </FormControl>
-
-        <FormControl className={classes.formControl}>
-          <InputLabel>Branch</InputLabel>
-          <Select onChange={setBranchId} value={branchId}>
-            {branchList.map((branch) => (
-              <MenuItem key={branch.id} value={branch.id}>
-                {branch.location}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl className={classes.formControl}>
-          <InputLabel>Role</InputLabel>
-          <Select onChange={setRoleId} value={roleId}>
-            {roleList.map((role) => (
-              <MenuItem key={role.id} value={role.id}>
-                {role.name}
-              </MenuItem>
-            ))}
-          </Select>
         </FormControl>
 
         <FormControl className={classes.formControl}>
@@ -271,7 +215,7 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
   );
 };
 
-const getEmployeeJson = (branch, role) => {
+const getCustomerJson = (role) => {
   const now = new Date().toISOString();
 
   return {
@@ -286,9 +230,7 @@ const getEmployeeJson = (branch, role) => {
       lastLogin: now,
       createdDate: now,
     },
-    branch,
-    nic: '',
   };
 };
 
-export default EmployeeDialog;
+export default CustomerDialog;
