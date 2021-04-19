@@ -41,12 +41,12 @@ const adminList = [
   },
   {
     text: 'Packages',
-    url: '/app/package',
+    url: '/app/packages',
     icon: <FeaturedPlayListIcon />,
   },
   {
     text: 'Services',
-    url: '/app/service',
+    url: '/app/services',
     icon: <CategoryIcon />,
   },
 ];

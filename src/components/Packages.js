@@ -1,28 +1,191 @@
-import TableOfContent from './TableOfContent';
+import { useState } from 'react';
+import { usePackageStore } from '../store/PackageStore';
+import TableOfContent from './TableOfContent2';
+import { IconButton, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { useObserver } from 'mobx-react-lite';
+import AcceptDialog from './AcceptDialog';
+import { updatePackage, createPackage } from '../api/organization';
+import PackageDialog from './PackageDialog';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
-function Packages() {
-  let headers = ['No', 'Name', 'Amount', 'Max Duration'];
+const Packages = () => {
+  const packageStore = usePackageStore();
 
-  let body = [
-    { name: 'Testing', amount: 1017, duration: 1 },
-    { name: 'Testing', amount: 1007, duration: 1 },
-    { name: 'Testing', amount: 1014, duration: 1 },
-    { name: 'Testing', amount: 1028, duration: 1 },
-    { name: 'Testing', amount: 1020, duration: 1 },
-    { name: 'Testing', amount: 1041, duration: 1 },
-    { name: 'Testing', amount: 1015, duration: 1 },
-    { name: 'Testing', amount: 1058, duration: 1 },
-    { name: 'Testing', amount: 1021, duration: 1 },
-    { name: 'Testing', amount: 1023, duration: 1 },
-    { name: 'Testing', amount: 1034, duration: 1 },
-    { name: 'Testing', amount: 1035, duration: 1 },
-    { name: 'Testing', amount: 1019, duration: 1 },
-    { name: 'Testing', amount: 1022, duration: 1 },
-    { name: 'Testing', amount: 1024, duration: 1 },
-    { name: 'Testing', amount: 1017, duration: 1 },
-  ];
+  const createRow = (pkg) => {
+    const { id, name, amount, allocatedHours, active } = pkg;
+    return { id, name, amount, allocatedHours, active: String(active) };
+  };
 
-  return <TableOfContent title="Packages" headers={headers} body={body} />;
-}
+  return useObserver(() => (
+    <TableOfContent
+      title="Packages"
+      headers={headers}
+      rows={packageStore.packages.map((pkg) => createRow(pkg))}
+      keyName="id"
+      ActionBar={ActionBar}
+    />
+  ));
+};
+
+const ActionBar = ({ selected }) => {
+  const packageStore = usePackageStore();
+
+  const selectedItemsData = selected.map((id) => packageStore.find(id));
+  const selectedCount = selected.length;
+  const actions = [];
+
+  if (selectedCount === 1) {
+    console.log('selected', selectedItemsData[0].name);
+    actions.push(
+      <PackageEditAction key="edit_action" pkg={selectedItemsData[0]} />
+    );
+  }
+
+  if (selectedCount > 0) {
+    actions.push(
+      <PackageChangeActiveAction
+        activate={false}
+        key="deactivate_action"
+        packages={selectedItemsData}
+      />
+    );
+    actions.push(
+      <PackageChangeActiveAction
+        activate={true}
+        key="activate_action"
+        packages={selectedItemsData}
+      />
+    );
+  }
+
+  actions.push(<PackageCreateAction key="create_action" />);
+  actions.push(<PackageRefreshAction key="refresh_action" />);
+
+  return <>{actions}</>;
+};
+
+const headers = [
+  { id: 'id', numeric: true, label: 'Id' },
+  { id: 'name', numeric: false, label: 'Name' },
+  { id: 'amount', numeric: false, label: 'Amount' },
+  { id: 'allocatedHours', numeric: false, label: 'Allocated Hours' },
+  { id: 'active', numeric: false, label: 'Active' },
+];
+
+const PackageRefreshAction = () => {
+  const packageStore = usePackageStore();
+
+  return (
+    <>
+      <Tooltip title="Refresh">
+        <IconButton
+          onClick={() => packageStore.refreshData()}
+          aria-label="refresh"
+        >
+          <RefreshIcon />
+        </IconButton>
+      </Tooltip>
+    </>
+  );
+};
+const PackageCreateAction = () => {
+  const [opened, setOpened] = useState(false);
+
+  return (
+    <>
+      <Tooltip title="Create">
+        <IconButton onClick={() => setOpened(true)} aria-label="create">
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
+
+      {opened && (
+        <PackageDialog
+          edit={false}
+          isOpened={opened}
+          closeWindow={() => setOpened(false)}
+        />
+      )}
+    </>
+  );
+};
+const PackageEditAction = ({ pkg }) => {
+  const [opened, setOpened] = useState(false);
+
+  return (
+    <>
+      <Tooltip title="Edit">
+        <IconButton onClick={() => setOpened(true)} aria-label="edit">
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+
+      {opened && (
+        <PackageDialog
+          edit={true}
+          pkg={pkg}
+          isOpened={opened}
+          closeWindow={() => setOpened(false)}
+        />
+      )}
+    </>
+  );
+};
+
+const PackageChangeActiveAction = ({ packages, activate = false }) => {
+  const packageStore = usePackageStore();
+  const [opened, setOpened] = useState(false);
+
+  const handleAccept = async () => {
+    await Promise.all(
+      packages.map(async (pkg) => {
+        await updatePackage({
+          ...pkg,
+          active: activate,
+        });
+      })
+    );
+
+    setOpened(false);
+    packageStore.refreshData();
+  };
+
+  return (
+    <>
+      <Tooltip title={activate ? 'Activate' : 'Deactivate'}>
+        <IconButton
+          onClick={() => setOpened(true)}
+          aria-label="activate or deactivate"
+        >
+          {activate ? <CheckCircleIcon /> : <RemoveCircleIcon />}
+        </IconButton>
+      </Tooltip>
+
+      {opened && (
+        <AcceptDialog
+          opened={opened}
+          title="Deactivate Customer"
+          description={
+            <div>
+              <span>{`Do you want to deactivate following packages?`}</span>
+              <ul>
+                {packages.map((pkg) => (
+                  <li key={pkg.id}>{`${pkg.name}`}</li>
+                ))}
+              </ul>
+            </div>
+          }
+          handleAccept={handleAccept}
+          handleClose={() => setOpened(false)}
+          warning={true}
+        />
+      )}
+    </>
+  );
+};
 
 export default Packages;

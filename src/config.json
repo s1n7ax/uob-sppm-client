@@ -5,15 +5,21 @@
   "login": {
     "url": "/login"
   },
+  "service": {
+    "url": "/service"
+  },
+  "package": {
+    "url": "/package"
+  },
   "organization": {
     "sales": {
       "url": "/org/sales",
-			"daily": {
-				"url": "/org/sales/daily"
-			},
-			"branch": {
-				"url": "/org/sales/branch"
-			}
+      "daily": {
+        "url": "/org/sales/daily"
+      },
+      "branch": {
+        "url": "/org/sales/branch"
+      }
     },
     "employees": {
       "url": "/org/employee"
@@ -21,14 +27,26 @@
     "employee": {
       "url": "/org/employee"
     },
-		"branch": {
-			"url":"/org/branch"
+    "branch": {
+      "url": "/org/branch"
+    },
+    "roles": {
+      "url": "/org/role"
+    },
+    "customer": {
+      "url": "/org/customer"
+    },
+    "package": {
+      "url": "/org/package"
+    },
+    "service": {
+      "url": "/org/service"
+    },
+		"stock": {
+			"url": "/org/stock/${branchId}"
 		},
-		"roles": {
-			"url":"/org/role"
-		},
-		"customer": {
-			"url": "/org/customer"
+		"item": {
+			"url": "/org/item"
 		}
   }
 }

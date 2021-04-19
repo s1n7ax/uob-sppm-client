@@ -121,3 +121,108 @@ export const updateCustomer = async (customer) => {
     headers: { 'Content-Type': 'application/json' },
   }).then((res) => res.json());
 };
+
+export const getAllPackages = async () => {
+  var url = new URL(config.package.url, BASE_URL);
+  return fetch(url).then((res) => res.json());
+};
+
+export const createPackage = async (pkg) => {
+  var url = new URL(org.package.url, BASE_URL);
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pkg),
+  }).then((res) => res.json());
+};
+export const updatePackage = async (pkg) => {
+  var url = new URL(org.package.url, BASE_URL);
+  return fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pkg),
+  }).then((res) => res.json());
+};
+
+export const getAllServices = async () => {
+  var url = new URL(config.service.url, BASE_URL);
+  return fetch(url).then((res) => res.json());
+};
+
+export const createService = async (service) => {
+  var url = new URL(org.service.url, BASE_URL);
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(service),
+  }).then((res) => res.json());
+};
+export const updateService = async (service) => {
+  var url = new URL(org.service.url, BASE_URL);
+  return fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(service),
+  }).then((res) => res.json());
+};
+
+export const getAllOutOfStock = async () => {
+  var url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
+
+  let params = { filterBy: 'out_of_stock' };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const getAllInStock = async () => {
+  var url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
+
+  let params = { filterBy: 'in_stock' };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const getAllOutOfStockByBranch = async (branchId) => {
+  var url = new URL(org.stock.url.interpolate({ branchId }), BASE_URL);
+
+  let params = { filterBy: 'out_of_stock' };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const getAllInStockByBranch = async (branchId) => {
+  var url = new URL(org.stock.url.interpolate({ branchId }), BASE_URL);
+
+  let params = { filterBy: 'in_stock' };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const createStockItem = async (stockItem) => {
+  var url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
+
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(stockItem),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+export const updateStockItem = async (stockItem) => {
+  var url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
+
+  return fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(stockItem),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+
+export const getAllItems = async () => {
+  var url = new URL(org.item.url, BASE_URL);
+
+  return fetch(url).then((res) => res.json());
+};

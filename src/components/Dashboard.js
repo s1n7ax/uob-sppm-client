@@ -45,7 +45,6 @@ const Dashboard = () => {
   useEffect(() => {
     (async () => {
       let sales = await getTodaySales();
-      console.log(sales);
       let totalIncome = 0;
       let chartData = [];
       let branchIncomes = {};

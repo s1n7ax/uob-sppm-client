@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useServiceStore } from '../store/ServiceStore';
+import { usePackageStore } from '../store/PackageStore';
 import TableOfContent from './TableOfContent2';
 import { IconButton, Tooltip } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -8,82 +8,92 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateService, createService } from '../api/organization';
-import ServiceDialog from './ServiceDialog';
+import StockItemDialog from './StockItemDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { updateStockItem } from '../api/organization';
+import { useBranchStore } from '../store/BranchStore';
+import { useItemStore } from '../store/ItemStore';
 
-const Services = () => {
-  const serviceStore = useServiceStore();
+const StockTableOfContent = ({ title, stocks, onUpdate }) => {
+  const createRow = (stockItem) => {
+    const { id, item, branch, count, active } = stockItem;
+    return {
+      id,
+      item: item.name,
+      branch: branch.location,
+      count,
+      active: String(active),
+    };
+  };
 
-  const createRow = (pkg) => {
-    const { id, name, amount, allocatedHours, active } = pkg;
-    return { id, name, amount, allocatedHours, active: String(active) };
+  const ActionBar = ({ selected }) => {
+    const selectedItemsData = selected.map((id) =>
+      stocks.find((stock) => stock.id === id)
+    );
+    const selectedCount = selected.length;
+    const actions = [];
+
+    if (selectedCount === 1) {
+      actions.push(
+        <StockEditAction
+          onUpdate={onUpdate}
+          key="edit_action"
+          stockItem={selectedItemsData[0]}
+        />
+      );
+    }
+
+    if (selectedCount > 0) {
+      actions.push(
+        <StockChangeActiveAction
+          onUpdate={onUpdate}
+          activate={false}
+          key="deactivate_action"
+          stockItems={selectedItemsData}
+        />
+      );
+      actions.push(
+        <StockChangeActiveAction
+          onUpdate={onUpdate}
+          activate={true}
+          key="activate_action"
+          stockItems={selectedItemsData}
+        />
+      );
+    }
+
+    actions.push(<StockCreateAction onUpdate={onUpdate} key="create_action" />);
+
+    return <>{actions}</>;
   };
 
   return useObserver(() => (
     <TableOfContent
-      title="Services"
+      title={title}
       headers={headers}
-      rows={serviceStore.services.map((pkg) => createRow(pkg))}
+      rows={stocks.map((stock) => createRow(stock))}
       keyName="id"
       ActionBar={ActionBar}
     />
   ));
 };
 
-const ActionBar = ({ selected }) => {
-  const serviceStore = useServiceStore();
-
-  const selectedItemsData = selected.map((id) => serviceStore.find(id));
-  const selectedCount = selected.length;
-  const actions = [];
-
-  if (selectedCount === 1) {
-    console.log('selected', selectedItemsData[0].name);
-    actions.push(
-      <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
-    );
-  }
-
-  if (selectedCount > 0) {
-    actions.push(
-      <ServiceChangeActiveAction
-        activate={false}
-        key="deactivate_action"
-        services={selectedItemsData}
-      />
-    );
-    actions.push(
-      <ServiceChangeActiveAction
-        activate={true}
-        key="activate_action"
-        services={selectedItemsData}
-      />
-    );
-  }
-
-  actions.push(<ServiceCreateAction key="create_action" />);
-  actions.push(<ServiceRefreshAction key="refresh_action" />);
-
-  return <>{actions}</>;
-};
-
 const headers = [
   { id: 'id', numeric: true, label: 'Id' },
-  { id: 'name', numeric: false, label: 'Name' },
-  { id: 'amount', numeric: false, label: 'Amount' },
-  { id: 'allocatedHours', numeric: false, label: 'Allocated Hours' },
+  { id: 'item', numeric: false, label: 'Item' },
+  { id: 'branch', numeric: false, label: 'Branch' },
+  { id: 'count', numeric: false, label: 'Count' },
   { id: 'active', numeric: false, label: 'Active' },
 ];
 
-const ServiceRefreshAction = () => {
-  const serviceStore = useServiceStore();
+const StockRefreshAction = () => {
+  const packageStore = usePackageStore();
 
   return (
     <>
       <Tooltip title="Refresh">
         <IconButton
-          onClick={() => serviceStore.refreshData()}
+          onClick={() => packageStore.refreshData()}
           aria-label="refresh"
         >
           <RefreshIcon />
@@ -92,7 +102,8 @@ const ServiceRefreshAction = () => {
     </>
   );
 };
-const ServiceCreateAction = () => {
+
+const StockCreateAction = ({ onUpdate }) => {
   const [opened, setOpened] = useState(false);
 
   return (
@@ -104,7 +115,8 @@ const ServiceCreateAction = () => {
       </Tooltip>
 
       {opened && (
-        <ServiceDialog
+        <StockItemDialog
+          onUpdate={onUpdate}
           edit={false}
           isOpened={opened}
           closeWindow={() => setOpened(false)}
@@ -113,7 +125,10 @@ const ServiceCreateAction = () => {
     </>
   );
 };
-const ServiceEditAction = ({ pkg }) => {
+
+const StockEditAction = ({ stockItem, onUpdate }) => {
+  const branchStore = useBranchStore();
+  const itemStore = useItemStore();
   const [opened, setOpened] = useState(false);
 
   return (
@@ -125,9 +140,12 @@ const ServiceEditAction = ({ pkg }) => {
       </Tooltip>
 
       {opened && (
-        <ServiceDialog
+        <StockItemDialog
+          onUpdate={onUpdate}
+          branchList={branchStore.branches}
+          itemList={itemStore.items}
           edit={true}
-          pkg={pkg}
+          stock={stockItem}
           isOpened={opened}
           closeWindow={() => setOpened(false)}
         />
@@ -136,22 +154,25 @@ const ServiceEditAction = ({ pkg }) => {
   );
 };
 
-const ServiceChangeActiveAction = ({ services, activate = false }) => {
-  const serviceStore = useServiceStore();
+const StockChangeActiveAction = ({
+  onUpdate,
+  stockItems,
+  activate = false,
+}) => {
   const [opened, setOpened] = useState(false);
 
   const handleAccept = async () => {
     await Promise.all(
-      services.map(async (pkg) => {
-        await updateService({
-          ...pkg,
+      stockItems.map(async (stock) => {
+        await updateStockItem({
+          ...stock,
           active: activate,
         });
       })
     );
 
     setOpened(false);
-    serviceStore.refreshData();
+    onUpdate();
   };
 
   return (
@@ -171,9 +192,9 @@ const ServiceChangeActiveAction = ({ services, activate = false }) => {
           title="Deactivate Customer"
           description={
             <div>
-              <span>{`Do you want to deactivate following services?`}</span>
+              <span>{`Do you want to deactivate following packages?`}</span>
               <ul>
-                {services.map((pkg) => (
+                {stockItems.map((pkg) => (
                   <li key={pkg.id}>{`${pkg.name}`}</li>
                 ))}
               </ul>
@@ -188,4 +209,4 @@ const ServiceChangeActiveAction = ({ services, activate = false }) => {
   );
 };
 
-export default Services;
+export default StockTableOfContent;

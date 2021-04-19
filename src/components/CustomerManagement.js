@@ -43,8 +43,6 @@ const ActionBar = ({ selected }) => {
   const selectedItemsData = selected.map((id) => customerStore.find(id));
   const selectedCount = selected.length;
   const actions = [];
-  console.log('selected', selected);
-  console.log('selected data', selectedItemsData);
 
   if (selectedCount === 1) {
     actions.push(

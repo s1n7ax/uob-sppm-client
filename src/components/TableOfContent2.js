@@ -201,7 +201,6 @@ export default function EnhancedTable({
   findByKey,
   selection = true,
 }) {
-  console.log(rows);
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');

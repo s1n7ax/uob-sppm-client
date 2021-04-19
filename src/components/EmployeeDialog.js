@@ -133,15 +133,9 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
         branch: updatedBranch,
       };
 
-      try {
-        edit
-          ? await updateEmployee(updatedEmp)
-          : await createEmployee(updatedEmp);
-      } catch (e) {
-        console.log('>>>>>>>>>>>>>>>>>>>');
-        console.log(e);
-        console.log('>>>>>>>>>>>>>>>>>>>');
-      }
+      edit
+        ? await updateEmployee(updatedEmp)
+        : await createEmployee(updatedEmp);
       await empStore.refreshData();
       args.closeWindow();
     })();

@@ -13,6 +13,7 @@ import DashboardOutlet from './DashboardOutlet';
 import UserManagement from './UserManagement';
 import Sales from './Sales';
 import Branches from './Branches';
+import Stocks from './Stocks';
 
 function Root() {
   return (
@@ -29,7 +30,7 @@ function Root() {
       </Route>
       <Route exact path="/app/stock">
         <DashboardOutlet>
-          <Dashboard />
+          <Stocks />
         </DashboardOutlet>
       </Route>
       <Route exact path="/app/sales">
@@ -40,6 +41,16 @@ function Root() {
       <Route exact path="/app/branches">
         <DashboardOutlet>
           <Branches />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/app/packages">
+        <DashboardOutlet>
+          <Packages />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/app/services">
+        <DashboardOutlet>
+          <Services />
         </DashboardOutlet>
       </Route>
       <Route exact path="/">
