@@ -8,7 +8,6 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CustomerDialog from './CustomerDialog';
 import { useCustomerStore } from '../store/CustomerStore';
 import { useRoleStore } from '../store/RoleStore';
-import { useBranchStore } from '../store/BranchStore';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
 import { updateCustomer } from '../api/organization';
@@ -40,7 +39,6 @@ const CustomerManagement = () => {
 
 const ActionBar = ({ selected }) => {
   const customerStore = useCustomerStore();
-  const roleStore = useRoleStore();
 
   const selectedItemsData = selected.map((id) => customerStore.find(id));
   const selectedCount = selected.length;
@@ -77,8 +75,8 @@ const ActionBar = ({ selected }) => {
 };
 
 const headers = [
-  { id: 'id', numeric: true, disablePadding: true, label: 'Id' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'id', numeric: true, disablePadding: false, label: 'Id' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'username', numeric: false, disablePadding: false, label: 'Username' },
   { id: 'active', numeric: false, disablePadding: false, label: 'Active' },
 ];

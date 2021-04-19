@@ -45,18 +45,19 @@ const Dashboard = () => {
   useEffect(() => {
     (async () => {
       let sales = await getTodaySales();
+      console.log(sales);
       let totalIncome = 0;
       let chartData = [];
       let branchIncomes = {};
 
       sales.forEach((sale) => {
         let saleTotal = 0;
-        saleTotal += sale.service.map(getAmountMap).reduce(calTotalReducer, 0);
+        saleTotal += sale.services.map(getAmountMap).reduce(calTotalReducer, 0);
         saleTotal += sale.packages.map(getAmountMap).reduce(calTotalReducer, 0);
 
         totalIncome += saleTotal;
         chartData.push({
-          time: getHMTime(sale.createdDate),
+          time: getHMTime(sale.caccountreatedDate),
           amount: saleTotal,
         });
 
@@ -98,7 +99,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
         <Grid item xs={12}>
-          <Paper className={fixedHeightPaper}>
+          <Paper className={classes.paper}>
             <Orders rows={branchIncomes} />
           </Paper>
         </Grid>

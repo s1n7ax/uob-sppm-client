@@ -11,23 +11,35 @@ import Dashboard from './Dashboard';
 import WebPageOutlet from './WebPageOutlet';
 import DashboardOutlet from './DashboardOutlet';
 import UserManagement from './UserManagement';
+import Sales from './Sales';
+import Branches from './Branches';
 
 function Root() {
   return (
     <>
-      <Route exact path="/dashboard">
+      <Route exact path="/app/dashboard">
         <DashboardOutlet>
           <Dashboard />
         </DashboardOutlet>
       </Route>
-      <Route exact path="/user_management">
+      <Route exact path="/app/user_management">
         <DashboardOutlet>
           <UserManagement />
         </DashboardOutlet>
       </Route>
-      <Route exact path="/stock">
+      <Route exact path="/app/stock">
         <DashboardOutlet>
           <Dashboard />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/app/sales">
+        <DashboardOutlet>
+          <Sales />
+        </DashboardOutlet>
+      </Route>
+      <Route exact path="/app/branches">
+        <DashboardOutlet>
+          <Branches />
         </DashboardOutlet>
       </Route>
       <Route exact path="/">

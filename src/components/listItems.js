@@ -3,48 +3,51 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
+import DeviceHubIcon from '@material-ui/icons/DeviceHub';
+import FeaturedPlayListIcon from '@material-ui/icons/FeaturedPlayList';
+import CategoryIcon from '@material-ui/icons/Category';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import { Link } from 'react-router-dom';
 import { useUserStore } from '../store/UserStore';
 
 const adminList = [
   {
     text: 'Dashboard',
-    url: '/dashboard',
+    url: '/app/dashboard',
     icon: <DashboardIcon />,
   },
   {
     text: 'User Management',
-    url: '/user_management',
-    icon: <ShoppingCartIcon />,
+    url: '/app/user_management',
+    icon: <PersonAddIcon />,
   },
   {
     text: 'Stock',
-    url: '/stock',
-    icon: <PeopleIcon />,
+    url: '/app/stock',
+    icon: <AddToPhotosIcon />,
   },
   {
     text: 'Sales',
-    url: '/sales',
+    url: '/app/sales',
     icon: <BarChartIcon />,
   },
   {
-    text: 'Branch',
-    url: '/branch',
-    icon: <LayersIcon />,
+    text: 'Branches',
+    url: '/app/branches',
+    icon: <DeviceHubIcon />,
   },
   {
-    text: 'Package',
-    url: '/package',
-    icon: <LayersIcon />,
+    text: 'Packages',
+    url: '/app/package',
+    icon: <FeaturedPlayListIcon />,
   },
   {
-    text: 'Service',
-    url: '/service',
-    icon: <LayersIcon />,
+    text: 'Services',
+    url: '/app/service',
+    icon: <CategoryIcon />,
   },
 ];
 

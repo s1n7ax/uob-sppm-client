@@ -75,8 +75,8 @@ const ActionBar = ({ selected }) => {
 };
 
 const headers = [
-  { id: 'id', numeric: true, disablePadding: true, label: 'Id' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'id', numeric: true, disablePadding: false, label: 'Id' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'username', numeric: false, disablePadding: false, label: 'Username' },
   { id: 'active', numeric: false, disablePadding: false, label: 'Active' },
   { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },

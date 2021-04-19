@@ -10,6 +10,50 @@ export const getTodaySales = async () => {
 
   return fetch(url).then((res) => res.json());
 };
+
+export const getSales = async (from, to) => {
+  var url = new URL(config.organization.sales.url, BASE_URL);
+  let params = { from, to };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const getDailySales = async (from, to) => {
+  var url = new URL(config.organization.sales.daily.url, BASE_URL);
+  let params = { from, to };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const getBranchSales = async (from, to) => {
+  var url = new URL(config.organization.sales.branch.url, BASE_URL);
+  let params = { from, to };
+  url.search = new URLSearchParams(params).toString();
+
+  return fetch(url).then((res) => res.json());
+};
+
+export const updateBranch = async (branch) => {
+  var url = new URL(config.organization.branch.url, BASE_URL);
+
+  return fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(branch),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+export const createBranch = async (branch) => {
+  var url = new URL(config.organization.branch.url, BASE_URL);
+
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(branch),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+
 export const getAllEmployees = async () => {
   var url = new URL(org.employees.url, BASE_URL);
   return fetch(url).then((res) => res.json());
@@ -21,7 +65,7 @@ export const getEmployeeById = async (id) => {
 };
 
 export const getAllBranches = async () => {
-  var url = new URL(config.organization.branches.url, BASE_URL);
+  var url = new URL(config.organization.branch.url, BASE_URL);
   return fetch(url).then((res) => res.json());
 };
 

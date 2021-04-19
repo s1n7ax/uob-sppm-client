@@ -53,6 +53,7 @@ function EnhancedTableHead(props) {
     rowCount,
     onRequestSort,
     headers,
+    selection,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -61,14 +62,16 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
+        {selection && (
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{ 'aria-label': 'select all desserts' }}
+            />
+          </TableCell>
+        )}
         {headers.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -157,7 +160,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
 
-      <ActionBar selected={selected} />
+      {ActionBar && <ActionBar selected={selected} />}
     </Toolbar>
   );
 };
@@ -196,7 +199,9 @@ export default function EnhancedTable({
   keyName,
   ActionBar,
   findByKey,
+  selection = true,
 }) {
+  console.log(rows);
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -240,6 +245,7 @@ export default function EnhancedTable({
   };
 
   const handleClick = (_event, name) => {
+    if (!selection) return;
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
@@ -309,6 +315,7 @@ export default function EnhancedTable({
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               headers={headers}
+              selection={selection}
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
@@ -327,12 +334,14 @@ export default function EnhancedTable({
                       key={row[keyName]}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
+                      {selection && (
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+                      )}
                       {Object.entries(row).map(([_key, value], index) => {
                         return index === 0 ? (
                           <TableCell
@@ -340,7 +349,6 @@ export default function EnhancedTable({
                             component="th"
                             id={labelId}
                             scope="row"
-                            padding="none"
                           >
                             {value}
                           </TableCell>

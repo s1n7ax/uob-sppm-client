@@ -9,12 +9,12 @@ import {
 } from 'recharts';
 import Title from './Title';
 
-export default function Chart({ data }) {
+export default function Chart({ data, title = 'Today' }) {
   const theme = useTheme();
 
   return (
     <>
-      <Title>Today</Title>
+      <Title>{title}</Title>
       <ResponsiveContainer>
         <LineChart
           data={data}

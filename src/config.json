@@ -7,7 +7,13 @@
   },
   "organization": {
     "sales": {
-      "url": "/org/sales"
+      "url": "/org/sales",
+			"daily": {
+				"url": "/org/sales/daily"
+			},
+			"branch": {
+				"url": "/org/sales/branch"
+			}
     },
     "employees": {
       "url": "/org/employee"
@@ -15,7 +21,7 @@
     "employee": {
       "url": "/org/employee"
     },
-		"branches": {
+		"branch": {
 			"url":"/org/branch"
 		},
 		"roles": {

@@ -27,7 +27,7 @@ export default function Orders({ rows }) {
         <TableHead>
           <TableRow>
             <TableCell align="right">Branch</TableCell>
-            <TableCell align="right">Contact(g)</TableCell>
+            <TableCell align="right">Contact</TableCell>
             <TableCell align="right">Amount</TableCell>
           </TableRow>
         </TableHead>
