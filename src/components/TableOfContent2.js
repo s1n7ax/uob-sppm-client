@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -272,6 +272,14 @@ export default function EnhancedTable({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // re evaluate selected items on rows change
+  useEffect(() => {
+    const filteredSelection = selected.filter((id) =>
+      rows.some((row) => row.id === id)
+    );
+    setSelected(filteredSelection);
+  }, [rows]);
 
   rows = filterSearchResults(rows);
   const isSelected = (name) => selected.indexOf(name) !== -1;
