@@ -187,7 +187,7 @@ const Sales = () => {
               title="Branch Daily Income"
               headers={headers}
               rows={tableRows}
-              keyName="id"
+              keyName="branch"
               selection={false}
             />
           </Paper>

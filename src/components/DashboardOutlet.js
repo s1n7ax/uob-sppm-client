@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,12 +15,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MenuList from './listItems';
+import NavigationIcon from '@material-ui/icons/Navigation';
+import { Button, Fab } from '@material-ui/core';
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+  },
+  extendedIcon: {
+    margin: theme.spacing(1),
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -96,44 +101,107 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  },
+  flexGrow: {
+    flexGrow: 1,
+  },
 }));
 
 export default function DashboardOutlet({ children }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [dashboard, setDashboard] = React.useState('Dashboard');
+  const [printMode, setPrintMode] = React.useState(false);
+
+  const handleDashboardChange = (item) => {
+    setDashboard(item.text);
+  };
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
+  const handlePrint = () => {
+    setPrintMode(true);
+  };
+
+  useEffect(() => {
+    if (!printMode) return;
+
+    window.print();
+    setPrintMode(false);
+  }, [printMode]);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar
-        position="absolute"
-        className={clsx(classes.appBar, open && classes.appBarShift)}
-      ></AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          <MenuList />
-        </List>
-      </Drawer>
+
+      {!printMode && (
+        <>
+          <AppBar
+            position="absolute"
+            className={clsx(classes.appBar, open && classes.appBarShift)}
+          >
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, open && classes.hide)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap>
+                {dashboard}
+              </Typography>
+              <div className={classes.flexGrow}></div>
+              <Button
+                onClick={handlePrint}
+                className={classes.printBtn}
+                variant="contained"
+                color="secondary"
+              >
+                Print
+              </Button>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: clsx(
+                classes.drawerPaper,
+                !open && classes.drawerPaperClose
+              ),
+            }}
+            open={open}
+          >
+            <div className={classes.toolbarIcon}>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </div>
+            <Divider />
+            <List>
+              <MenuList onChange={handleDashboardChange} />
+            </List>
+          </Drawer>
+        </>
+      )}
       <main className={classes.content}>
         <Container maxWidth="lg" className={classes.container}>
+          <div className={classes.drawerHeader} />
           {children}
         </Container>
       </main>

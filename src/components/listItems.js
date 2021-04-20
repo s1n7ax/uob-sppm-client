@@ -10,6 +10,7 @@ import FeaturedPlayListIcon from '@material-ui/icons/FeaturedPlayList';
 import CategoryIcon from '@material-ui/icons/Category';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import { Link } from 'react-router-dom';
 import { useUserStore } from '../store/UserStore';
 
@@ -33,6 +34,11 @@ const adminList = [
     text: 'Sales',
     url: '/app/sales',
     icon: <BarChartIcon />,
+  },
+  {
+    text: 'Items',
+    url: '/app/item_management',
+    icon: <PlaylistAddIcon />,
   },
   {
     text: 'Branches',
@@ -82,13 +88,13 @@ const stockList = [
   },
 ];
 
-const createList = (list) => {
+const createList = (list, onChange) => {
   return (
     <div>
-      {list.map((item, index) => {
+      {list.map((item) => {
         return (
-          <Link key={index} to={item.url}>
-            <ListItem button>
+          <Link key={item.text} to={item.url}>
+            <ListItem button onClick={() => onChange(item)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItem>
@@ -99,12 +105,12 @@ const createList = (list) => {
   );
 };
 
-const MenuList = () => {
+const MenuList = ({ onChange }) => {
   const store = useUserStore();
 
   switch (store.role) {
     case 'admin':
-      return createList(adminList);
+      return createList(adminList, onChange);
 
     case 'manager':
       return createList(managerList);

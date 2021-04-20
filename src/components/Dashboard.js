@@ -56,7 +56,7 @@ const Dashboard = () => {
 
         totalIncome += saleTotal;
         chartData.push({
-          time: getHMTime(sale.caccountreatedDate),
+          time: getHMTime(sale.createdDate),
           amount: saleTotal,
         });
 

@@ -226,3 +226,23 @@ export const getAllItems = async () => {
 
   return fetch(url).then((res) => res.json());
 };
+
+export const updateItem = async (item) => {
+  var url = new URL(org.item.url, BASE_URL);
+
+  return fetch(url, {
+    method: 'PUT',
+    body: JSON.stringify(item),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
+
+export const createItem = async (item) => {
+  var url = new URL(org.item.url, BASE_URL);
+
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(item),
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => res.json());
+};
