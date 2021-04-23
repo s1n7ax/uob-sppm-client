@@ -34,7 +34,11 @@
       "url": "/org/role"
     },
     "customer": {
-      "url": "/org/customer"
+      "url": "/org/customer",
+
+      "appointment": {
+        "url": "/org/customer/appointment"
+      }
     },
     "package": {
       "url": "/org/package"
@@ -42,11 +46,11 @@
     "service": {
       "url": "/org/service"
     },
-		"stock": {
-			"url": "/org/stock/${branchId}"
-		},
-		"item": {
-			"url": "/org/item"
-		}
+    "stock": {
+      "url": "/org/stock/${branchId}"
+    },
+    "item": {
+      "url": "/org/item"
+    }
   }
 }

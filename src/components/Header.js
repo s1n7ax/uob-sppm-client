@@ -23,6 +23,11 @@ let FlexBottom = styled.div`
   justify-content: flex-end;
 `;
 
+let HeaderText = styled.label`
+  font-family: Sail;
+  font-size: 40px;
+`;
+
 function Header() {
   let menus = [
     { text: 'home', url: '/' },
@@ -33,6 +38,7 @@ function Header() {
     { text: 'contact us', url: '/contact_us' },
     { text: 'login', url: '/login' },
     { text: 'register', url: '/registration' },
+    { text: 'appointments', url: '/appointments' },
   ];
 
   let menuContent = menus.map((menu, index) => {
@@ -59,8 +65,8 @@ function Header() {
         <Container>
           <Logo src={logo} alt="logo" />
           <FlexBottom>
-            <label>Salon</label>
-            <label>Chandani</label>
+            <HeaderText>Salon</HeaderText>
+            <HeaderText>Chandani</HeaderText>
           </FlexBottom>
         </Container>
       </Navbar.Brand>

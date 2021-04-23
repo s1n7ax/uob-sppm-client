@@ -1,3 +1,18 @@
+@font-face {
+  font-family: 'Sail';
+  src: local('Sail'), url(fonts/Sail-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Artifika';
+  src: local('Artifika'), url(fonts/Artifika-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: local('Poppins'), url(fonts/Poppins-Regular.ttf) format('truetype');
+}
+
 html {
   width: 100%;
   height: 100%;
@@ -12,7 +27,7 @@ body {
 
   background-color: var(--bodyBackgroundColor);
   color: var(--bodyColor);
-  font-family: var(--bodyFontFamily), var(--bodyFontFamilyFallback);
+  font-family: Poppins;
   font-size: var(--bodyFontSize);
   font-weight: var(--bodyFontWeight);
   line-height: var(--bodyLineHeight);
@@ -53,4 +68,13 @@ body {
 
 .App-link {
   color: #61dafb;
+}
+
+.fade-enter {
+  opacity: 0;
+  z-index: 1;
+}
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 5000ms ease-in;
 }

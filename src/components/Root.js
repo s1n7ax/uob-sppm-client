@@ -15,6 +15,34 @@ import ItemManagement from './ItemManagement';
 import Sales from './Sales';
 import Branches from './Branches';
 import Stocks from './Stocks';
+import Appointments from './CustomerAppointments';
+import WebPageCenteredOutlet from './WebPageCenteredOutlet';
+
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
+const WebPageOutletRouter = ({ path, content }) => {
+  return (
+    <Route exact path={path}>
+      <WebPageOutlet>{content}</WebPageOutlet>
+    </Route>
+  );
+};
+
+const WebPageCenteredOutletRouter = ({ path, content }) => {
+  return (
+    <Route
+      render={({ location }) => (
+        <Route exact path={path}>
+          <TransitionGroup>
+            <CSSTransition key={location.key} timeout={1000} classNames="fade">
+              <WebPageCenteredOutlet>{content}</WebPageCenteredOutlet>
+            </CSSTransition>
+          </TransitionGroup>
+        </Route>
+      )}
+    />
+  );
+};
 
 function Root() {
   return (
@@ -59,59 +87,31 @@ function Root() {
 
         {/* DASHBOARD PRINT VIEWS */}
         <Route path="/">
-          <WebPageOutlet>
-            <Route exact path="/">
-              <Home />
-            </Route>
+          <WebPageOutletRouter path="/" content={<Home />} />
 
-            <Route exact path="/app/dashboard/print">
-              <Dashboard />
-            </Route>
+          <WebPageOutletRouter path="/about_us" content={<AboutUs />} />
 
-            <Route exact path="/app/user_management/print">
-              <UserManagement />
-            </Route>
+          <WebPageCenteredOutletRouter
+            path="/services"
+            content={<Services />}
+          />
 
-            <Route exact path="/app/stock/print">
-              <Stocks />
-            </Route>
+          <WebPageCenteredOutletRouter
+            path="/packages"
+            content={<Packages />}
+          />
 
-            <Route exact path="/app/sales/print">
-              <Sales />
-            </Route>
+          <WebPageCenteredOutletRouter path="/login" content={<Login />} />
 
-            <Route exact path="/app/branches/print">
-              <Branches />
-            </Route>
+          <WebPageCenteredOutletRouter
+            path="/registration"
+            content={<Registration />}
+          />
 
-            <Route exact path="/app/packages/print">
-              <Packages />
-            </Route>
-
-            <Route exact path="/app/services/print">
-              <Services />
-            </Route>
-
-            <Route exact path="/about_us">
-              <AboutUs />
-            </Route>
-
-            <Route exact path="/services">
-              <Services />
-            </Route>
-
-            <Route exact path="/packages">
-              <Packages />
-            </Route>
-
-            <Route exact path="/login">
-              <Login />
-            </Route>
-
-            <Route exact path="/registration">
-              <Registration />
-            </Route>
-          </WebPageOutlet>
+          <WebPageCenteredOutletRouter
+            path="/appointments"
+            content={<Appointments />}
+          />
         </Route>
       </Switch>
     </>

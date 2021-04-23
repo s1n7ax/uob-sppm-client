@@ -4,6 +4,7 @@ import './BootstrapCustom.css';
 import './App.css';
 import './common/global-functions';
 
+// stores
 import { BrowserRouter as Router } from 'react-router-dom';
 import { UserStoreProvider } from './store/UserStore';
 import { EmployeeStoreProvider } from './store/EmployeeStore';
@@ -13,6 +14,7 @@ import { CustomerStoreProvider } from './store/CustomerStore';
 import { PackageStoreProvider } from './store/PackageStore';
 import { ServiceStoreProvider } from './store/ServiceStore';
 import { ItemStoreProvider } from './store/ItemStore';
+import { CustomerAppointmentStoreProvider } from './store/CustomerAppointmentStore';
 
 const StoreProvider = ({ children }) => {
   return (
@@ -23,7 +25,9 @@ const StoreProvider = ({ children }) => {
             <PackageStoreProvider>
               <ServiceStoreProvider>
                 <ItemStoreProvider>
-                  <BranchStoreProvider>{children}</BranchStoreProvider>
+                  <CustomerAppointmentStoreProvider>
+                    <BranchStoreProvider>{children}</BranchStoreProvider>
+                  </CustomerAppointmentStoreProvider>
                 </ItemStoreProvider>
               </ServiceStoreProvider>
             </PackageStoreProvider>
