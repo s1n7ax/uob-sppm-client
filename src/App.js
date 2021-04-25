@@ -15,6 +15,7 @@ import { PackageStoreProvider } from './store/PackageStore';
 import { ServiceStoreProvider } from './store/ServiceStore';
 import { ItemStoreProvider } from './store/ItemStore';
 import { CustomerAppointmentStoreProvider } from './store/CustomerAppointmentStore';
+import { SnackbarStoreProvider } from './store/SnackbarStore';
 
 const StoreProvider = ({ children }) => {
   return (
@@ -26,7 +27,9 @@ const StoreProvider = ({ children }) => {
               <ServiceStoreProvider>
                 <ItemStoreProvider>
                   <CustomerAppointmentStoreProvider>
-                    <BranchStoreProvider>{children}</BranchStoreProvider>
+                    <SnackbarStoreProvider>
+                      <BranchStoreProvider>{children}</BranchStoreProvider>
+                    </SnackbarStoreProvider>
                   </CustomerAppointmentStoreProvider>
                 </ItemStoreProvider>
               </ServiceStoreProvider>

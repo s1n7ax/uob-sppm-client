@@ -32,7 +32,6 @@ const PackageDialog = ({ edit, pkg, role, ...args }) => {
   pkg = pkg || getPackageJson(role);
 
   const packageStore = usePackageStore();
-  console.log(pkg.description);
 
   const [name, setName] = useEVValueState(pkg.name);
   const [amount, setAmount] = useEVValueState(pkg.amount);
@@ -194,8 +193,6 @@ const allocatedHourValidation = (value) => {
     error = true;
     helpText = "Allocated Hours shouldn't be longer than 24h";
   }
-
-  console.log(error, helpText);
 
   return { error, helpText };
 };

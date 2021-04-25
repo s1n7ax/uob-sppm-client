@@ -35,8 +35,6 @@ const Appointments = () => {
     };
   };
 
-  console.log(appointmentStore.appointments);
-
   return useObserver(() => (
     <TableOfContent
       title="Appointments"

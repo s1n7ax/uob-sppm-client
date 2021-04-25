@@ -5,9 +5,11 @@ import CenterLayout from './CenterLayout';
 
 function CardSet({ title, data }) {
   return (
-    <Grid container justify="center">
+    <Grid container justify="space-around">
       <Grid item xs={12}>
-        <CenterLayout>{/*<h1 title={title} />*/}</CenterLayout>
+        <CenterLayout>
+          <h2>{title}</h2>
+        </CenterLayout>
       </Grid>
       {data.map((card, index) => {
         return (

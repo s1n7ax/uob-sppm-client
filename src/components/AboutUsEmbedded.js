@@ -52,7 +52,9 @@ const Image = styled.img`
 
 const ImageBorder = styled.div`
   border-style: solid;
+  border-width: 5px;
   grid-area: 2/2/4/4;
+  color: var(--primary-color);
 `;
 
 const TextContainer = styled.div`

@@ -1,6 +1,8 @@
 import ImageSlider from './ImageSlider';
 import AboutUs from './AboutUsEmbedded';
 import CardSet from './CardSet';
+import Spacer from './Spacer';
+import Paper from '@material-ui/core/Paper';
 
 import img1 from '../images/sliders/general/1.webp';
 import img2 from '../images/sliders/general/2.webp';
@@ -11,13 +13,17 @@ import img5 from '../images/sliders/general/5.webp';
 import sv1 from '../images/services/1.webp';
 import sv2 from '../images/services/2.webp';
 import sv3 from '../images/services/3.webp';
-import PageContentArea from './PageContentArea';
-import CenterLayout from './CenterLayout';
-import styled from 'styled-components';
-import { Container, Grid, Paper, Button } from '@material-ui/core';
-import Carousel from 'react-material-ui-carousel';
+import { Container, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    padding: theme.spacing(2),
+  },
+}));
 
 function Home() {
+  const classes = useStyles();
+
   let slides = [
     { src: img1, alt: 'hair1' },
     { src: img2, alt: 'hair2' },
@@ -69,11 +75,24 @@ function Home() {
   ];
 
   return (
-    <Container>
-      <ImageSlider data={slides} />
-      <AboutUs />
-      <CardSet title="Services" data={serviceCards} />
-      <CardSet title="Packages" data={packageCards} />
+    <Container className={classes.container}>
+      <Spacer />
+      <Paper className={classes.paper}>
+        <ImageSlider data={slides} />
+      </Paper>
+      <Spacer />
+      <Paper className={classes.paper}>
+        <AboutUs />
+      </Paper>
+      <Spacer />
+      <Paper className={classes.paper}>
+        <CardSet title="Services" data={serviceCards} />
+      </Paper>
+      <Spacer />
+      <Paper className={classes.paper}>
+        <CardSet title="Packages" data={packageCards} />
+      </Paper>
+      <Spacer />
     </Container>
   );
 }

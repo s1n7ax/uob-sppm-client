@@ -32,7 +32,6 @@ const ItemDialog = ({ edit, item, role, ...args }) => {
   item = item || getItemJson(role);
 
   const itemStore = useItemStore();
-  console.log(item.description);
 
   const [name, setName] = useEVValueState(item.name);
   const [description, setDescription] = useEVValueState(item.description);

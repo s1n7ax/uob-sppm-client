@@ -2,8 +2,16 @@
   "host": {
     "url": "http://localhost:8080"
   },
-  "login": {
-    "url": "/login"
+  "user": {
+    "details": {
+      "url": "/user/details"
+    },
+    "login": {
+      "url": "/user/login"
+    },
+    "logout": {
+      "url": "/logout"
+    }
   },
   "service": {
     "url": "/service"

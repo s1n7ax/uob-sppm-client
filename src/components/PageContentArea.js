@@ -10,9 +10,13 @@ function PageContentArea({ children, backgroundImage, opacity }) {
 }
 
 const Container = styled.div`
+  flex-grow: 1;
+  height: 100%;
+  overflow: hidden;
+
   display: grid;
   grid-template-columns: 1fr 6fr 1fr;
-  grid-template-rows: 5em auto 5em;
+  grid-template-rows: 0 auto 0;
   grid-template-areas:
     '. . .'
     '. content .'
@@ -30,7 +34,9 @@ const Content = styled.div`
 const Background = styled.div`
   width: 100%;
   height: 100%;
-  max-height: 100%;
+
+  padding: 0px;
+  margin: 0px;
 
   grid-area: 1/1/4/4;
 
@@ -47,6 +53,7 @@ const Background = styled.div`
 
   filter: blur(5px);
   overflow: hidden;
+  transform: scale(1.2);
 `;
 
 export default PageContentArea;

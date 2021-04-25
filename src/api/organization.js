@@ -3,282 +3,245 @@ import config from '../config.json';
 const BASE_URL = config.host.url;
 const org = config.organization;
 
-export const getTodaySales = async () => {
-  const url = new URL(config.organization.sales.url, BASE_URL);
-  const params = { from: new Date() };
-  url.search = new URLSearchParams(params).toString();
+let orgFetch = fetch;
 
-  return fetch(url).then((res) => res.json());
+// eslint-disable-next-line no-native-reassign
+fetch = (url, options) => {
+  return orgFetch(url, { ...options, credentials: 'include' });
+};
+
+const fetchJson = (url, body, options) => {
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...((options && options.headers) || {}),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+};
+
+export const resolveResponse = (res) => {
+  if (res.ok) return;
+
+  throw new Error(res.status);
+};
+
+export const resolveJsonResponse = (res) => {
+  if (res.ok) return res.json();
+
+  throw new Error(res.status);
+};
+
+export const getURL = (url, params) => {
+  const _url = new URL(url, BASE_URL);
+  _url.search = new URLSearchParams(params).toString();
+
+  return _url;
+};
+
+export const getTodaySales = async () => {
+  return fetch(
+    getURL(org.sales.url, {
+      from: new Date(),
+    })
+  ).then(resolveJsonResponse);
 };
 
 export const getSales = async (from, to) => {
-  const url = new URL(config.organization.sales.url, BASE_URL);
-  const params = { from, to };
-  url.search = new URLSearchParams(params).toString();
-
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.sales.url, { from, to })).then(resolveJsonResponse);
 };
 
 export const getDailySales = async (from, to) => {
-  const url = new URL(config.organization.sales.daily.url, BASE_URL);
-  const params = { from, to };
-  url.search = new URLSearchParams(params).toString();
-
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.sales.daily.url, { from, to })).then(
+    resolveJsonResponse
+  );
 };
 
 export const getBranchSales = async (from, to) => {
-  const url = new URL(config.organization.sales.branch.url, BASE_URL);
-  const params = { from, to };
-  url.search = new URLSearchParams(params).toString();
-
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.sales.branch.url, { from, to })).then(
+    resolveJsonResponse
+  );
 };
 
 export const updateBranch = async (branch) => {
-  const url = new URL(config.organization.branch.url, BASE_URL);
-
-  return fetch(url, {
+  return fetchJson(getURL(org.branch.url), branch, {
     method: 'PUT',
-    body: JSON.stringify(branch),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 export const createBranch = async (branch) => {
-  const url = new URL(config.organization.branch.url, BASE_URL);
-
-  return fetch(url, {
+  return fetchJson(getURL(org.branch.url), branch, {
     method: 'POST',
-    body: JSON.stringify(branch),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const getAllEmployees = async () => {
-  const url = new URL(org.employees.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.employee.url)).then(resolveJsonResponse);
 };
 
 export const getEmployeeById = async (id) => {
-  const url = new URL(org.employee.url.interpolate({ id }), BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.employee.url.interpolate({ id }))).then(
+    resolveJsonResponse
+  );
 };
 
 export const getAllBranches = async () => {
-  const url = new URL(config.organization.branch.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.branch.url)).then(resolveJsonResponse);
 };
 
 export const getAllRoles = async () => {
-  const url = new URL(config.organization.roles.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.roles.url)).then(resolveJsonResponse);
 };
 
 export const createEmployee = async (emp) => {
-  const url = new URL(config.organization.employee.url, BASE_URL);
-  return fetch(url, {
-    method: 'POSt',
-    body: JSON.stringify(emp),
-    headers: { 'Content-Type': 'application/json' },
+  return fetch(getURL(org.employee.url), emp, {
+    method: 'POST',
   });
 };
 
 export const updateEmployee = async (emp) => {
-  const url = new URL(config.organization.employee.url, BASE_URL);
-  return fetch(url, {
+  return fetch(getURL(org.employee.url), emp, {
     method: 'PUT',
-    body: JSON.stringify(emp),
-    headers: { 'Content-Type': 'application/json' },
   });
 };
 
-export const deconsteEmployee = async (empId) => {
-  const url = new URL(`${config.organization.employee.url}/${empId}`, BASE_URL);
-  return fetch(url, {
+export const deleteEmployee = async (empId) => {
+  return fetch(getURL(`${org.employee.url}/${empId}`), {
     method: 'DELETE',
   });
 };
 
 export const getAllCustomers = async () => {
-  const url = new URL(org.customer.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.customer.url)).then(resolveJsonResponse);
 };
 
 export const createCustomer = async (customer) => {
-  const url = new URL(org.customer.url, BASE_URL);
-  return fetch(url, {
+  return fetch(getURL(org.customer.url), customer, {
     method: 'POST',
-    body: JSON.stringify(customer),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const updateCustomer = async (customer) => {
-  const url = new URL(org.customer.url, BASE_URL);
-  return fetch(url, {
+  return fetch(getURL(org.customer.url), customer, {
     method: 'PUT',
-    body: JSON.stringify(customer),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const getAllPackages = async () => {
-  const url = new URL(config.package.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(config.package.url)).then(resolveJsonResponse);
 };
 
 export const createPackage = async (pkg) => {
-  const url = new URL(org.package.url, BASE_URL);
-  return fetch(url, {
+  return fetch(getURL(org.package.url), pkg, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(pkg),
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
+
 export const updatePackage = async (pkg) => {
-  const url = new URL(org.package.url, BASE_URL);
-  return fetch(url, {
+  return fetchJson(getURL(org.package.url), pkg, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(pkg),
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const getAllServices = async () => {
-  const url = new URL(config.service.url, BASE_URL);
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(config.service.url)).then(resolveJsonResponse);
 };
 
 export const createService = async (service) => {
-  const url = new URL(org.service.url, BASE_URL);
-  return fetch(url, {
+  return fetchJson(getURL(org.service.url), service, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(service),
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
+
 export const updateService = async (service) => {
-  const url = new URL(org.service.url, BASE_URL);
-  return fetch(url, {
+  return fetch(getURL(org.service.url), service, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(service),
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const getAllOutOfStock = async () => {
-  const url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
-
   const params = { filterBy: 'out_of_stock' };
-  url.search = new URLSearchParams(params).toString();
 
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.stock.url, params)).then(resolveJsonResponse);
 };
 
 export const getAllInStock = async () => {
-  const url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
-
   const params = { filterBy: 'in_stock' };
-  url.search = new URLSearchParams(params).toString();
 
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.stock.url, params)).then(resolveJsonResponse);
 };
 
 export const getAllOutOfStockByBranch = async (branchId) => {
-  const url = new URL(org.stock.url.interpolate({ branchId }), BASE_URL);
-
   const params = { filterBy: 'out_of_stock' };
-  url.search = new URLSearchParams(params).toString();
 
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.stock.url.interpolate({ branchId }), params)).then(
+    resolveJsonResponse
+  );
 };
 
 export const getAllInStockByBranch = async (branchId) => {
-  const url = new URL(org.stock.url.interpolate({ branchId }), BASE_URL);
-
   const params = { filterBy: 'in_stock' };
-  url.search = new URLSearchParams(params).toString();
 
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.stock.url.interpolate({ branchId }), params)).then(
+    resolveJsonResponse
+  );
 };
 
 export const createStockItem = async (stockItem) => {
-  const url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
-
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(stockItem),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  return fetchJson(
+    getURL(org.stock.url.interpolate({ branchId: '' })),
+    stockItem,
+    {
+      method: 'POST',
+    }
+  ).then(resolveJsonResponse);
 };
 export const updateStockItem = async (stockItem) => {
-  const url = new URL(org.stock.url.interpolate({ branchId: '' }), BASE_URL);
-
-  return fetch(url, {
-    method: 'PUT',
-    body: JSON.stringify(stockItem),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  return fetchJson(
+    getURL(org.stock.url.interpolate({ branchId: '' })),
+    stockItem,
+    {
+      method: 'PUT',
+    }
+  ).then(resolveJsonResponse);
 };
 
 export const getAllItems = async () => {
-  const url = new URL(org.item.url, BASE_URL);
-
-  return fetch(url).then((res) => res.json());
+  return fetch(getURL(org.item.url)).then(resolveJsonResponse);
 };
 
 export const updateItem = async (item) => {
-  const url = new URL(org.item.url, BASE_URL);
-
-  return fetch(url, {
+  return fetchJson(getURL(org.item.url), item, {
     method: 'PUT',
-    body: JSON.stringify(item),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const createItem = async (item) => {
-  const url = new URL(org.item.url, BASE_URL);
-
-  return fetch(url, {
+  return fetch(getURL(org.item.url), item, {
     method: 'POST',
-    body: JSON.stringify(item),
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const getAllAppointmentsByCustomer = async () => {
-  const url = new URL(org.customer.appointment.url, BASE_URL);
-
-  return fetch(url, {
-    headers: {
-      Authorization: 'Basic Y3VzdG9tZXI6Y3VzdG9tZXI=',
-    },
-  }).then((res) => res.json());
+  return fetch(getURL(org.customer.appointment.url)).then(resolveJsonResponse);
 };
 
 export const createCustomerAppointment = async (appointment) => {
-  const url = new URL(org.customer.appointment.url, BASE_URL);
-
-  return fetch(url, {
+  return fetchJson(getURL(org.customer.appointment.url), appointment, {
     method: 'POST',
-    body: JSON.stringify(appointment),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Basic Y3VzdG9tZXI6Y3VzdG9tZXI=',
-    },
-  }).then((res) => res.json());
+  }).then(resolveJsonResponse);
 };
 
 export const updateCustomerAppointment = async (appointment) => {
-  const url = new URL(org.customer.appointment.url, BASE_URL);
-
-  return fetch(url, {
+  return fetchJson(getURL(org.customer.appointment.url), appointment, {
     method: 'PUT',
-    body: JSON.stringify(appointment),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Basic Y3VzdG9tZXI6Y3VzdG9tZXI=',
-    },
-  }).then((res) => res.json());
+  }).then(resolveResponse);
+};
+
+export const getCurrentUserDetails = async () => {
+  return fetch(getURL(config.user.details.url)).then(resolveJsonResponse);
+};
+
+export const logout = async () => {
+  return fetch(getURL(config.user.logout.url)).then(resolveResponse);
 };

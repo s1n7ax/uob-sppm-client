@@ -39,7 +39,6 @@ const ActionBar = ({ selected }) => {
   const actions = [];
 
   if (selectedCount === 1) {
-    console.log('selected', selectedItemsData[0].name);
     actions.push(
       <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
     );

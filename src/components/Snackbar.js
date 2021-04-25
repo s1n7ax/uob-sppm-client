@@ -1,57 +1,65 @@
-import Button from '@material-ui/core/Button';
 import MaterialSnackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { useEffect, useState } from 'react';
+import MuiAlert from '@material-ui/lab/Alert';
+import { useSnackbarStore } from '../store/SnackbarStore';
+import { useObserver } from 'mobx-react-lite';
 
-export default function Snackbar({
-  opened,
-  message,
-  duration = 5000,
-  onClose,
-}) {
-  const [open, setOpen] = useState(opened);
+const Alert = (props) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+const Snackbar = () => {
+  const snackbarStore = useSnackbarStore();
 
   const handleClose = (_event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+    if (reason === 'clickaway') return;
 
-    setOpen(false);
+    snackbarStore.handleClose();
   };
 
-  useEffect(() => {
-    if (!open) onClose(open);
-  }, [open]);
+  return useObserver(() => (
+    <MaterialSnackbar
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      open={snackbarStore.opened}
+      autoHideDuration={6000}
+      onClose={handleClose}
+    >
+      {snackbarStore.type === 'success' ? (
+        <Alert
+          key={snackbarStore.key}
+          onClose={snackbarStore.handleClose}
+          severity="success"
+        >
+          {snackbarStore.message}
+        </Alert>
+      ) : snackbarStore.type === 'error' ? (
+        <Alert
+          key={snackbarStore.key}
+          onClose={snackbarStore.handleClose}
+          severity="error"
+        >
+          {snackbarStore.message}
+        </Alert>
+      ) : snackbarStore.type === 'info' ? (
+        <Alert
+          key={snackbarStore.key}
+          onClose={snackbarStore.handleClose}
+          severity="info"
+        >
+          {snackbarStore.message}
+        </Alert>
+      ) : (
+        snackbarStore.type === 'warning' && (
+          <Alert
+            key={snackbarStore.key}
+            onClose={snackbarStore.handleClose}
+            severity="warning"
+          >
+            {snackbarStore.message}
+          </Alert>
+        )
+      )}
+    </MaterialSnackbar>
+  ));
+};
 
-  return (
-    <div>
-      <MaterialSnackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={open}
-        autoHideDuration={duration}
-        onClose={handleClose}
-        message={message}
-        action={
-          <>
-            <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleClose}
-            >
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        }
-      />
-    </div>
-  );
-}
+export default Snackbar;

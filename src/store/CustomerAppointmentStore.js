@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
 import { getAllAppointmentsByCustomer } from '../api/organization';
+import { useUserStore } from './UserStore';
+import { autorun } from 'mobx';
 
 export const CustomerAppointmentContext = createContext();
 
 export const CustomerAppointmentStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
   const store = useLocalObservable(() => ({
     appointments: [],
 
@@ -17,9 +20,14 @@ export const CustomerAppointmentStoreProvider = ({ children }) => {
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(
+    () =>
+      autorun(() => {
+        if (userStore.role.toLowerCase() === 'customer') store.refreshData();
+        store.appointments = [];
+      }),
+    [userStore.role]
+  );
 
   return (
     <CustomerAppointmentContext.Provider value={store}>
