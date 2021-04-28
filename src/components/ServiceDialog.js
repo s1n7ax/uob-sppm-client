@@ -7,12 +7,13 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { updateService, createService } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useServiceStore } from '../store/ServiceStore';
+import { useUserStore } from '../store/UserStore';
 import { notEmptyValidation } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import ServiceAPI from '../api/ServiceAPI';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -64,6 +65,9 @@ const ServiceDialog = ({ edit, pkg, role, ...args }) => {
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const serviceAPI = new ServiceAPI(userStore.role);
+
   const handleSave = () => {
     const now = new Date();
 
@@ -78,7 +82,9 @@ const ServiceDialog = ({ edit, pkg, role, ...args }) => {
         createdDate: now,
       };
 
-      edit ? await updateService(newService) : await createService(newService);
+      edit
+        ? await serviceAPI.updateService(newService)
+        : await serviceAPI.createService(newService);
       await serviceStore.refreshData();
       args.closeWindow();
     })();

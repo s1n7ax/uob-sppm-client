@@ -10,9 +10,10 @@ import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
 import StockItemDialog from './StockItemDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { updateStockItem } from '../api/organization';
 import { useBranchStore } from '../store/BranchStore';
 import { useItemStore } from '../store/ItemStore';
+import { useUserStore } from '../store/UserStore';
+import StockItemAPI from '../api/StockItemAPI';
 
 const StockTableOfContent = ({ title, stocks, onUpdate }) => {
   const createRow = (stockItem) => {
@@ -160,11 +161,13 @@ const StockChangeActiveAction = ({
   activate = false,
 }) => {
   const [opened, setOpened] = useState(false);
+  const userStore = useUserStore();
+  const stockItemAPI = new StockItemAPI(userStore.role);
 
   const handleAccept = async () => {
     await Promise.all(
       stockItems.map(async (stock) => {
-        await updateStockItem({
+        await stockItemAPI.updateStockItem({
           ...stock,
           active: activate,
         });

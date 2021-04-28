@@ -6,12 +6,12 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { useCustomerStore } from '../store/CustomerStore';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateBranch, updateCustomer } from '../api/organization';
 import BranchDialog from './BranchDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useUserStore } from '../store/UserStore';
+import BranchAPI from '../api/BranchAPI';
 
 const Branches = () => {
   const branchStore = useBranchStore();
@@ -139,11 +139,13 @@ const BranchEditAction = ({ branch }) => {
 const BranchChangeActiveAction = ({ branches, activate = false }) => {
   const branchStore = useBranchStore();
   const [opened, setOpened] = useState(false);
+  const userStore = useUserStore();
+  const branchAPI = new BranchAPI(userStore.role);
 
   const handleAccept = async () => {
     await Promise.all(
       branches.map(async (branch) => {
-        await updateBranch({
+        await branchAPI.updateBranch({
           ...branch,
           active: activate,
         });

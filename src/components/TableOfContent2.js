@@ -300,7 +300,11 @@ export default function EnhancedTable({
           className={classes.search}
         >
           <Grid item>
-            <TextField label="Search" onChange={handleSearchChange} />
+            <TextField
+              color="secondary"
+              label="Search"
+              onChange={handleSearchChange}
+            />
           </Grid>
           <Grid item>
             <SearchIcon />

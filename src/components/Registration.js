@@ -31,7 +31,7 @@ function Registration() {
   const handleLogin = (ev) => {
     ev.preventDefault();
 
-    snackbarStore.showError('invalid name');
+    snackbarStore.showError('aslfjsldfj');
   };
   return (
     <Paper className={classes.paper}>

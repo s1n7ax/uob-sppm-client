@@ -1,10 +1,8 @@
-import clsx from 'clsx';
 import Home from './Home';
 import Packages from './Packages';
 import Login from './Login';
 
 import { Route, Switch } from 'react-router-dom';
-import { CustomerAppointmentStoreProvider } from '../store/CustomerAppointmentStore';
 
 import Services from './Services';
 import Registration from './Registration';
@@ -180,20 +178,20 @@ const Root = () => {
       autorun(() => {
         const anyLoggedInUserViews = [...allUserWebView, ...loggedInUserView];
 
-        switch (userStore.role.toLowerCase()) {
-          case 'customer':
+        switch (userStore.role) {
+          case 'CUSTOMER':
             setWebViews([...anyLoggedInUserViews, ...customerViews]);
             break;
 
-          case 'admin':
+          case 'ADMIN':
             setWebViews(anyLoggedInUserViews);
             break;
 
-          case 'manager':
+          case 'MANAGER':
             setWebViews(anyLoggedInUserViews);
             break;
 
-          case 'stock_keeper':
+          case 'STOCK_KEEPER':
             setWebViews(anyLoggedInUserViews);
             break;
 
@@ -205,29 +203,27 @@ const Root = () => {
   );
 
   return (
-    <div className={classes.background1}>
+    <div>
       <Switch>
-        {/* APP COMPONENTS */}
-        <Route exact path="/app">
+        <Route path="/app">
           <DashboardOutlet>
             {appViews.map(({ path, component }) => (
               <Route key={path} exact path={path}>
-                {console.log(path)}
                 {component}
               </Route>
             ))}
           </DashboardOutlet>
         </Route>
 
-        {/* WEB PAGE COMPONENTS */}
-        <Route path="/">
-          <Route
-            render={({ location }) => (
+        <Route
+          path="/"
+          render={({ location }) => (
+            <div className={classes.background1}>
               <WebPageOutlet>
                 <SwitchTransition>
                   <CSSTransition
                     key={location.pathname}
-                    timeout={100}
+                    timeout={300}
                     classNames="fade"
                   >
                     <Switch location={location}>
@@ -243,9 +239,9 @@ const Root = () => {
                   </CSSTransition>
                 </SwitchTransition>
               </WebPageOutlet>
-            )}
-          />
-        </Route>
+            </div>
+          )}
+        />
       </Switch>
       <Snackbar />
     </div>

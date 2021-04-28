@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePackageStore } from '../store/PackageStore';
 import TableOfContent from './TableOfContent2';
 import { IconButton, Tooltip } from '@material-ui/core';
@@ -8,12 +8,15 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updatePackage, createPackage } from '../api/organization';
 import PackageDialog from './PackageDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import PackageAPI from '../api/PackageAPI';
+import { useUserStore } from '../store/UserStore';
+import { autorun } from 'mobx';
 
 const Packages = () => {
   const packageStore = usePackageStore();
+  const userStore = useUserStore();
 
   const createRow = (pkg) => {
     const { id, name, amount, allocatedHours, active } = pkg;
@@ -27,42 +30,59 @@ const Packages = () => {
       rows={packageStore.packages.map((pkg) => createRow(pkg))}
       keyName="id"
       ActionBar={ActionBar}
+      selection={userStore.role !== 'CUSTOMER' && userStore.role !== ''}
     />
   ));
 };
 
 const ActionBar = ({ selected }) => {
   const packageStore = usePackageStore();
+  const userStore = useUserStore();
 
   const selectedItemsData = selected.map((id) => packageStore.find(id));
   const selectedCount = selected.length;
-  const actions = [];
+  const [actions, setActions] = useState([]);
 
-  if (selectedCount === 1) {
-    actions.push(
-      <PackageEditAction key="edit_action" pkg={selectedItemsData[0]} />
-    );
-  }
+  useEffect(
+    () =>
+      autorun(() => {
+        let actions = [];
 
-  if (selectedCount > 0) {
-    actions.push(
-      <PackageChangeActiveAction
-        activate={false}
-        key="deactivate_action"
-        packages={selectedItemsData}
-      />
-    );
-    actions.push(
-      <PackageChangeActiveAction
-        activate={true}
-        key="activate_action"
-        packages={selectedItemsData}
-      />
-    );
-  }
+        if (userStore.role === 'CUSTOMER' || userStore.role === '') {
+          setActions([<div />]);
+          return;
+        }
 
-  actions.push(<PackageCreateAction key="create_action" />);
-  actions.push(<PackageRefreshAction key="refresh_action" />);
+        if (selectedCount === 1) {
+          actions.push(
+            <PackageEditAction key="edit_action" pkg={selectedItemsData[0]} />
+          );
+        }
+
+        if (selectedCount > 0) {
+          actions.push(
+            <PackageChangeActiveAction
+              activate={false}
+              key="deactivate_action"
+              packages={selectedItemsData}
+            />
+          );
+          actions.push(
+            <PackageChangeActiveAction
+              activate={true}
+              key="activate_action"
+              packages={selectedItemsData}
+            />
+          );
+        }
+
+        actions.push(<PackageCreateAction key="create_action" />);
+        actions.push(<PackageRefreshAction key="refresh_action" />);
+
+        setActions(actions);
+      }),
+    [userStore.role]
+  );
 
   return <>{actions}</>;
 };
@@ -136,13 +156,16 @@ const PackageEditAction = ({ pkg }) => {
 };
 
 const PackageChangeActiveAction = ({ packages, activate = false }) => {
+  const userStore = useUserStore();
   const packageStore = usePackageStore();
   const [opened, setOpened] = useState(false);
+
+  const packageAPI = new PackageAPI(userStore.role);
 
   const handleAccept = async () => {
     await Promise.all(
       packages.map(async (pkg) => {
-        await updatePackage({
+        await packageAPI.updatePackage({
           ...pkg,
           active: activate,
         });

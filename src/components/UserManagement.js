@@ -64,8 +64,8 @@ const UserManagement = () => {
         <Tabs
           value={value}
           onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example"

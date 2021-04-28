@@ -12,10 +12,6 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import {
-  updateCustomerAppointment,
-  createCustomerAppointment,
-} from '../api/organization';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useCustomerAppointmentStore } from '../store/CustomerAppointmentStore';
 import DialogWindow from './DialogWindow';
@@ -26,6 +22,8 @@ import isWithinInterval from 'date-fns/isWithinInterval';
 import isValid from 'date-fns/isValid';
 import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
+import { useUserStore } from '../store/UserStore';
+import AppointmentAPI from '../api/AppointmentAPI';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -98,6 +96,9 @@ const CustomerAppointmentDialog = ({
     },
   };
 
+  const userStore = useUserStore();
+  const appointmentAPI = new AppointmentAPI(userStore.role);
+
   const handleSave = () => {
     const branch = branchList.find((branch) => branch.id === branchId);
 
@@ -119,8 +120,8 @@ const CustomerAppointmentDialog = ({
       };
 
       edit
-        ? await updateCustomerAppointment(newCustomerAppointment)
-        : await createCustomerAppointment(newCustomerAppointment);
+        ? await appointmentAPI.updateAppointment(newCustomerAppointment)
+        : await appointmentAPI.createAppointment(newCustomerAppointment);
       await customerAppointmentStore.refreshData();
       args.closeWindow();
     })();
@@ -143,7 +144,7 @@ const CustomerAppointmentDialog = ({
       <form className={classes.root} noValidate autoComplete="off">
         <FormControl className={classes.formControl}>
           <InputLabel>Branch</InputLabel>
-          <Select value={branchId} onChange={setBranchId}>
+          <Select color="secondary" value={branchId} onChange={setBranchId}>
             {branchList.map((branch) => (
               <MenuItem key={branch.id} value={branch.id}>
                 {branch.location}
@@ -158,6 +159,8 @@ const CustomerAppointmentDialog = ({
         >
           <InputLabel>Services</InputLabel>
           <Select
+            Select
+            color="secondary"
             multiple
             value={serviceIds}
             onChange={setServiceIds}
@@ -188,6 +191,8 @@ const CustomerAppointmentDialog = ({
           <InputLabel>Packages</InputLabel>
           <Select
             multiple
+            Select
+            color="secondary"
             value={packageIds}
             onChange={setPackageIds}
             input={<Input />}
@@ -215,6 +220,7 @@ const CustomerAppointmentDialog = ({
           <TextField
             label="Time"
             type="datetime-local"
+            color="secondary"
             defaultValue={timeStart}
             onChange={setTimeStart}
             className={classes.textField}

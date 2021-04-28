@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllAppointmentsByCustomer } from '../api/organization';
 import { useUserStore } from './UserStore';
 import { autorun } from 'mobx';
+import AppointmentAPI from '../api/AppointmentAPI';
 
 export const CustomerAppointmentContext = createContext();
 
 export const CustomerAppointmentStoreProvider = ({ children }) => {
   const userStore = useUserStore();
+  const allowedRoles = ['CUSTOMER'];
+
   const store = useLocalObservable(() => ({
     appointments: [],
 
@@ -16,17 +18,19 @@ export const CustomerAppointmentStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.appointments = await getAllAppointmentsByCustomer();
+      if (allowedRoles.includes(userStore.role)) {
+        const appointmentAPI = new AppointmentAPI(userStore.role);
+        this.appointments = await appointmentAPI.getAllAppointments();
+      } else {
+        this.appointments = [];
+      }
     },
   }));
 
-  useEffect(
-    () =>
-      autorun(() => {
-        if (userStore.role.toLowerCase() === 'customer') store.refreshData();
-        store.appointments = [];
-      }),
-    [userStore.role]
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
   );
 
   return (

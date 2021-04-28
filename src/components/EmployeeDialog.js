@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
-import { updateEmployee, createEmployee } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useBranchStore } from '../store/BranchStore';
@@ -28,6 +27,8 @@ import {
   nicValidation,
 } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import EmployeeAPI from '../api/EmployeeAPI';
+import { useUserStore } from '../store/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -113,6 +114,9 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const employeeAPI = new EmployeeAPI(userStore.role);
+
   const handleSave = () => {
     (async () => {
       const updatedBranch = branchStore.find(branchId);
@@ -134,8 +138,8 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
       };
 
       edit
-        ? await updateEmployee(updatedEmp)
-        : await createEmployee(updatedEmp);
+        ? await employeeAPI.updateEmployee(updatedEmp)
+        : await employeeAPI.createEmployee(updatedEmp);
       await empStore.refreshData();
       args.closeWindow();
     })();

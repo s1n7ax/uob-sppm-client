@@ -9,10 +9,13 @@ import {
 } from '@material-ui/pickers';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { getDailySales, getBranchSales } from '../api/organization';
 import TableOfContent from './TableOfContent2';
 import { VictoryPie } from 'victory';
 import Snackbar from './Snackbar';
+import { useUserStore } from '../store/UserStore';
+import SaleAPI from '../api/SaleAPI';
+import { autorun } from 'mobx';
+import { useSnackbarStore } from '../store/SnackbarStore';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -45,6 +48,8 @@ const Sales = () => {
   const [toDate, setToDate] = useState(new Date());
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const userStore = useUserStore();
+  const snackbarStore = useSnackbarStore();
 
   const getYMD = (dateStr) => {
     let date = new Date(dateStr);
@@ -54,16 +59,18 @@ const Sales = () => {
   const createRow = (branchSale) => {
     return {
       branch: branchSale.branch.location,
-      date: getYMD(branchSale.date),
-      amount: branchSale.amount,
+      date: getYMD(branchSale.createdDate),
+      amount: getAmountFromSale(branchSale),
     };
   };
 
   const calculatePieChartData = (branchSales) => {
+    console.log('branch sales>>', branchSales);
+
     const branchSalesMap = {};
 
     branchSales
-      .map((i) => ({ branch: i.branch.location, amount: i.amount }))
+      .map((i) => ({ branch: i.branch.location, amount: getAmountFromSale(i) }))
       .forEach((i) => {
         if (!branchSalesMap[i.branch]) branchSalesMap[i.branch] = 0;
 
@@ -82,32 +89,47 @@ const Sales = () => {
     }));
   };
 
-  useEffect(() => {
-    const asyncCall = async () => {
-      const [dailySales, branchSales] = await Promise.all([
-        getDailySales(fromDate, toDate),
-        getBranchSales(fromDate, toDate),
-      ]);
+  const allowedRoles = ['ADMIN', 'MANAGER'];
 
-      setCharData(
-        dailySales.map((i) => ({
-          time: getYMD(i.date),
-          amount: i.amount,
-        }))
-      );
+  const getAmountFromSale = (sale) => {
+    let tot = 0;
+    tot += sale.packages
+      .map((pkg) => pkg.amount)
+      .reduce((acc, curr) => acc + curr, 0);
+    tot += sale.services
+      .map((service) => service.amount)
+      .reduce((acc, curr) => acc + curr, 0);
 
-      setTableRows(branchSales.map((i) => createRow(i)));
-
-      setPieCharData(calculatePieChartData(branchSales));
-    };
-
-    asyncCall();
-  }, [fromDate, toDate]);
-
-  const showSnakbarMessage = (message) => {
-    setSnakbarOpened(true);
-    setSnakbarMessage(message);
+    return tot;
   };
+
+  useEffect(
+    () =>
+      autorun(() => {
+        const asyncCall = async () => {
+          if (!allowedRoles.includes(userStore.role)) return;
+          const saleAPI = new SaleAPI(userStore.role);
+          const [dailySales, branchSales] = await Promise.all([
+            saleAPI.getDailySales(fromDate, toDate),
+            saleAPI.getAllBranchSales(fromDate, toDate),
+          ]);
+
+          setCharData(
+            dailySales.map((i) => ({
+              time: getYMD(i.createdDate),
+              amount: getAmountFromSale(i),
+            }))
+          );
+
+          setTableRows(branchSales.map((i) => createRow(i)));
+
+          setPieCharData(calculatePieChartData(branchSales));
+        };
+
+        asyncCall();
+      }),
+    [fromDate, toDate]
+  );
 
   const handleFromDateChange = (date) => {
     if (date > toDate) setToDate(date);
@@ -117,7 +139,7 @@ const Sales = () => {
 
   const handleToDateChange = (date) => {
     if (fromDate > date) {
-      showSnakbarMessage("To date shouldn't be greater than from date");
+      snackbarStore.showError("To date shouldn't be greater than from date");
       return;
     }
 

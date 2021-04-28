@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllPackages } from '../api/organization';
+import PackageAPI from '../api/PackageAPI';
+import { useUserStore } from './UserStore';
+import { autorun } from 'mobx';
 
 export const PackageContext = createContext();
 
 export const PackageStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
+  const allowedRoles = ['ADMIN', 'MANAGER', 'CUSTOMER', ''];
+
   const store = useLocalObservable(() => ({
     packages: [],
 
@@ -17,13 +22,21 @@ export const PackageStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.packages = await getAllPackages();
+      console.log(allowedRoles);
+      if (allowedRoles.includes(userStore.role)) {
+        const packageAPI = new PackageAPI(userStore.role);
+        this.packages = await packageAPI.getAllPackages();
+      } else {
+        this.packages = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
+  );
 
   return (
     <PackageContext.Provider value={store}>{children}</PackageContext.Provider>

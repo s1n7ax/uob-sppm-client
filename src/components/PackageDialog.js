@@ -7,12 +7,13 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { updatePackage, createPackage } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { usePackageStore } from '../store/PackageStore';
+import { useUserStore } from '../store/UserStore';
 import { notEmptyValidation } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import PackageAPI from '../api/PackageAPI';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -66,6 +67,9 @@ const PackageDialog = ({ edit, pkg, role, ...args }) => {
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const packageAPI = new PackageAPI(userStore.role);
+
   const handleSave = () => {
     const now = new Date();
 
@@ -81,7 +85,9 @@ const PackageDialog = ({ edit, pkg, role, ...args }) => {
         createdDate: now,
       };
 
-      edit ? await updatePackage(newPackage) : await createPackage(newPackage);
+      edit
+        ? await packageAPI.updatePackage(newPackage)
+        : await packageAPI.createPackage(newPackage);
       await packageStore.refreshData();
       args.closeWindow();
     })();

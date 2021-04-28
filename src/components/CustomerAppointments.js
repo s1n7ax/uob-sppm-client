@@ -8,7 +8,6 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateCustomerAppointment } from '../api/organization';
 import CustomerAppointmentDialog from './CustomerAppointmentDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import differenceInHours from 'date-fns/differenceInHours';
@@ -16,6 +15,9 @@ import format from 'date-fns/format';
 import { useBranchStore } from '../store/BranchStore';
 import { useServiceStore } from '../store/ServiceStore';
 import { usePackageStore } from '../store/PackageStore';
+import { useUserStore } from '../store/UserStore';
+import AppointmentAPI from '../api/AppointmentAPI';
+import { useSnackbarStore } from '../store/SnackbarStore';
 
 const Appointments = () => {
   const appointmentStore = useCustomerAppointmentStore();
@@ -52,12 +54,6 @@ const ActionBar = ({ selected }) => {
   const selectedItemsData = selected.map((id) => appointmentStore.find(id));
   const selectedCount = selected.length;
   const actions = [];
-
-  if (selectedCount === 1) {
-    actions.push(
-      <AppointmentEditAction key="edit_action" pkg={selectedItemsData[0]} />
-    );
-  }
 
   if (selectedCount > 0) {
     actions.push(
@@ -156,16 +152,25 @@ const AppointmentEditAction = ({ pkg: appointment }) => {
 };
 
 const AppointmentChangeActiveAction = ({ appointments, activate = false }) => {
+  const userStore = useUserStore();
+  const snackbarStore = useSnackbarStore();
+  const appointmentAPI = new AppointmentAPI(userStore.role);
   const appointmentStore = useCustomerAppointmentStore();
   const [opened, setOpened] = useState(false);
 
   const handleAccept = async () => {
     await Promise.all(
-      appointments.map(async (pkg) => {
-        await updateCustomerAppointment({
-          ...pkg,
-          active: activate,
-        });
+      appointments.map(async (app) => {
+        try {
+          await appointmentAPI.updateAppointment({
+            ...app,
+            active: activate,
+          });
+        } catch (e) {
+          snackbarStore.showError(
+            'Failed to update appointment on ' + getFormatedDate(app.timeStart)
+          );
+        }
       })
     );
 
@@ -193,7 +198,7 @@ const AppointmentChangeActiveAction = ({ appointments, activate = false }) => {
               <span>{`Do you want to deactivate following appointments?`}</span>
               <ul>
                 {appointments.map((pkg) => (
-                  <li key={pkg.id}>{`${pkg.name}`}</li>
+                  <li key={pkg.id}>{`${getFormatedDate(pkg.timeStart)}`}</li>
                 ))}
               </ul>
             </div>
@@ -205,6 +210,10 @@ const AppointmentChangeActiveAction = ({ appointments, activate = false }) => {
       )}
     </>
   );
+};
+
+const getFormatedDate = (date) => {
+  return format(new Date(date), "P' 'p");
 };
 
 export default Appointments;

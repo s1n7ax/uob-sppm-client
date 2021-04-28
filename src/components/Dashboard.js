@@ -9,7 +9,8 @@ import TodayIncome from './TodayIncomeCard';
 import Orders from './Orders';
 import { makeStyles } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { getTodaySales } from '../api/organization';
+import { useSaleStore } from '../store/SaleStore.';
+import { autorun } from 'mobx';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -29,6 +30,8 @@ const Dashboard = () => {
   const [chartData, setCharData] = useState([]);
   const [branchIncomes, setBranchIncomes] = useState([]);
 
+  const saleStore = useSaleStore();
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const calTotalReducer = (acc, curr) => acc + curr;
@@ -42,47 +45,55 @@ const Dashboard = () => {
     });
   };
 
-  useEffect(() => {
-    (async () => {
-      let sales = await getTodaySales();
-      let totalIncome = 0;
-      let chartData = [];
-      let branchIncomes = {};
+  useEffect(
+    () =>
+      autorun(() => {
+        (async () => {
+          let sales = saleStore.todaySales;
+          let totalIncome = 0;
+          let chartData = [];
+          let branchIncomes = {};
 
-      sales.forEach((sale) => {
-        let saleTotal = 0;
-        saleTotal += sale.services.map(getAmountMap).reduce(calTotalReducer, 0);
-        saleTotal += sale.packages.map(getAmountMap).reduce(calTotalReducer, 0);
+          sales.forEach((sale) => {
+            let saleTotal = 0;
+            saleTotal += sale.services
+              .map(getAmountMap)
+              .reduce(calTotalReducer, 0);
+            saleTotal += sale.packages
+              .map(getAmountMap)
+              .reduce(calTotalReducer, 0);
 
-        totalIncome += saleTotal;
-        chartData.push({
-          time: getHMTime(sale.createdDate),
-          amount: saleTotal,
-        });
+            totalIncome += saleTotal;
+            chartData.push({
+              time: getHMTime(sale.createdDate),
+              amount: saleTotal,
+            });
 
-        let branchName = sale.branch.location;
-        let contact = sale.branch.contact;
-        let amount = saleTotal;
+            let branchName = sale.branch.location;
+            let contact = sale.branch.contact;
+            let amount = saleTotal;
 
-        let currBranch = branchIncomes[branchName];
+            let currBranch = branchIncomes[branchName];
 
-        currBranch = currBranch || {};
-        currBranch.name = branchName;
-        currBranch.contact = contact;
-        currBranch.amount = (currBranch.amount || 0) + amount;
+            currBranch = currBranch || {};
+            currBranch.name = branchName;
+            currBranch.contact = contact;
+            currBranch.amount = (currBranch.amount || 0) + amount;
 
-        branchIncomes[branchName] = currBranch;
-      }, []);
+            branchIncomes[branchName] = currBranch;
+          }, []);
 
-      setTotalIncome(totalIncome);
-      setCharData(chartData);
-      setBranchIncomes(
-        Object.entries(branchIncomes).map(([_, value]) => {
-          return value;
-        })
-      );
-    })();
-  }, []);
+          setTotalIncome(totalIncome);
+          setCharData(chartData);
+          setBranchIncomes(
+            Object.entries(branchIncomes).map(([_, value]) => {
+              return value;
+            })
+          );
+        })();
+      }),
+    [saleStore.sales, saleStore.todaySales]
+  );
 
   return (
     <>

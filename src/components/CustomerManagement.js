@@ -10,7 +10,8 @@ import { useCustomerStore } from '../store/CustomerStore';
 import { useRoleStore } from '../store/RoleStore';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateCustomer } from '../api/organization';
+import { useUserStore } from '../store/UserStore';
+import CustomerAPI from '../api/CustomerAPI';
 
 const CustomerManagement = () => {
   const customerStore = useCustomerStore();
@@ -128,12 +129,14 @@ const CustomerCreateAction = () => {
 
 const CustomerChangeActiveAction = ({ customers, activate = false }) => {
   const customerStore = useCustomerStore();
+  const userStore = useUserStore();
+  const customerAPI = new CustomerAPI(userStore.role);
   const [opened, setOpened] = useState(false);
 
   const handleAccept = async () => {
     await Promise.all(
       customers.map(async (emp) => {
-        await updateCustomer({
+        await customerAPI.updateCustomer({
           ...emp,
           user: { ...emp.user, active: activate },
         });

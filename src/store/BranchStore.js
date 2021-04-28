@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllBranches } from '../api/organization';
+import { useUserStore } from './UserStore';
+import BranchAPI from '../api/BranchAPI';
+import { autorun } from 'mobx';
 
 export const BranchContext = createContext();
 
 export const BranchStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
+  const allowedRoles = ['ADMIN', 'MANAGEMENT', 'CUSTOMER'];
+
   const store = useLocalObservable(() => ({
     branches: [],
 
@@ -13,13 +18,20 @@ export const BranchStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      store.branches = await getAllBranches();
+      if (allowedRoles.includes(userStore.role)) {
+        const branchAPI = new BranchAPI(userStore.role);
+        this.branches = await branchAPI.getAllBranches();
+      } else {
+        this.branches = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
+  );
 
   return (
     <BranchContext.Provider value={store}>{children}</BranchContext.Provider>

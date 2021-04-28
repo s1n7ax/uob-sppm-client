@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllAppointments } from '../api/organization';
+import { autorun } from 'mobx';
+import { useUserStore } from './UserStore';
+import AppointmentAPI from '../api/AppointmentAPI';
 
 export const AppointmentContext = createContext();
 
 export const CustomerAppointmentStoreProvider = ({ children }) => {
+  const allowedRoles = ['CUSTOMER'];
+  const userStore = useUserStore();
+
   const store = useLocalObservable(() => ({
     appointments: [],
 
@@ -13,13 +18,22 @@ export const CustomerAppointmentStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.appointments = await getAllAppointments();
+      if (allowedRoles.includes(userStore.role)) {
+        const appointmentAPI = new AppointmentAPI();
+        this.appointments = await appointmentAPI.getAllAppointments();
+      } else {
+        this.appointments = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(
+    () =>
+      autorun(() => () => {
+        store.refreshData();
+      }),
+    [userStore.role]
+  );
 
   return (
     <AppointmentContext.Provider value={store}>

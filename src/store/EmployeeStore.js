@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllEmployees } from '../api/organization';
+import { useUserStore } from './UserStore';
+import EmployeeAPI from '../api/EmployeeAPI';
+import { autorun } from 'mobx';
 
 export const EmployeeContext = createContext();
 
 export const EmployeeStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
+  const allowedRoles = ['ADMIN'];
+
   const store = useLocalObservable(() => ({
     employees: [],
 
@@ -34,13 +39,20 @@ export const EmployeeStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.employees = await getAllEmployees();
+      if (allowedRoles.includes(userStore.role)) {
+        const employeeAPI = new EmployeeAPI(userStore.role);
+        this.employees = await employeeAPI.getAllEmployees();
+      } else {
+        this.employees = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
+  );
 
   return (
     <EmployeeContext.Provider value={store}>

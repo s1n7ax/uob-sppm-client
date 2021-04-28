@@ -13,16 +13,17 @@ import {
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { useEffect, useState } from 'react';
-import { updateCustomer, createCustomer } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useCustomerStore } from '../store/CustomerStore';
+import { useUserStore } from '../store/UserStore';
 import {
   usernameValidation,
   passwordValidation,
   nameValidation,
 } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import CustomerAPI from '../api/CustomerAPI';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -94,6 +95,9 @@ const CustomerDialog = ({ edit, customer, role, ...args }) => {
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const customerAPI = new CustomerAPI(userStore.role);
+
   const handleSave = () => {
     (async () => {
       const updatedCustomer = {
@@ -109,8 +113,8 @@ const CustomerDialog = ({ edit, customer, role, ...args }) => {
       };
 
       edit
-        ? await updateCustomer(updatedCustomer)
-        : await createCustomer(updatedCustomer);
+        ? await customerAPI.updateCustomer(updatedCustomer)
+        : await customerAPI.createCustomer(updatedCustomer);
       await customerStore.refreshData();
       args.closeWindow();
     })();

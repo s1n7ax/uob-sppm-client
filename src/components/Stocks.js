@@ -9,17 +9,13 @@ import {
   Select,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import {
-  getAllInStock,
-  getAllOutOfStock,
-  getAllInStockByBranch,
-  getAllOutOfStockByBranch,
-} from '../api/organization';
 import { useUserStore } from '../store/UserStore';
 import { useBranchStore } from '../store/BranchStore';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useObserver } from 'mobx-react-lite';
 import StockTableOfContent from './StockTableOfContent';
+import StockItemAPI from '../api/StockItemAPI';
+import { autorun } from 'mobx';
 
 const useStyles = makeStyles((theme) => ({
   datePickerPaper: {
@@ -42,31 +38,39 @@ const Stocks = () => {
 
   // styles
   const classes = useStyles();
+  const allowedRoles = ['ADMIN', 'MANAGER'];
 
   const updateStockItems = async () => {
+    if (!allowedRoles.includes(userStore.role)) return;
+
+    const stockAPI = new StockItemAPI(userStore.role);
     let inStockAPI;
     let outOfStockAPI;
 
     if (branchId === -1) {
-      inStockAPI = getAllInStock;
-      outOfStockAPI = getAllOutOfStock;
+      inStockAPI = stockAPI.getAllInStock();
+      outOfStockAPI = stockAPI.getAllOutOfStock();
     } else {
-      inStockAPI = () => getAllInStockByBranch(branchId);
-      outOfStockAPI = () => getAllOutOfStockByBranch(branchId);
+      inStockAPI = stockAPI.getAllInStockByBranch(branchId);
+      outOfStockAPI = stockAPI.getAllOutOfStockByBranch(branchId);
     }
 
     const [inStockItemsTemp, outOfStockItemsTemp] = await Promise.all([
-      inStockAPI(),
-      outOfStockAPI(),
+      inStockAPI,
+      outOfStockAPI,
     ]);
 
     setInStockItems(inStockItemsTemp);
     setOutOfStockItems(outOfStockItemsTemp);
   };
 
-  useEffect(() => {
-    updateStockItems();
-  }, [branchId]);
+  useEffect(
+    () =>
+      autorun(() => {
+        updateStockItems();
+      }),
+    [userStore.role, branchId]
+  );
 
   const handleStockItemChange = () => {
     updateStockItems();

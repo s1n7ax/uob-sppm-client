@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useServiceStore } from '../store/ServiceStore';
 import TableOfContent from './TableOfContent2';
 import { IconButton, Tooltip } from '@material-ui/core';
@@ -8,11 +8,14 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateService, createService } from '../api/organization';
 import ServiceDialog from './ServiceDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useUserStore } from '../store/UserStore';
+import ServiceAPI from '../api/ServiceAPI';
+import { autorun } from 'mobx';
 
 const Services = () => {
+  const userStore = useUserStore();
   const serviceStore = useServiceStore();
 
   const createRow = (pkg) => {
@@ -27,42 +30,58 @@ const Services = () => {
       rows={serviceStore.services.map((pkg) => createRow(pkg))}
       keyName="id"
       ActionBar={ActionBar}
+      selection={userStore.role !== 'CUSTOMER' && userStore.role !== ''}
     />
   ));
 };
 
 const ActionBar = ({ selected }) => {
+  const userStore = useUserStore();
+
   const serviceStore = useServiceStore();
 
   const selectedItemsData = selected.map((id) => serviceStore.find(id));
   const selectedCount = selected.length;
-  const actions = [];
+  const [actions, setActions] = useState([]);
 
-  if (selectedCount === 1) {
-    actions.push(
-      <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
-    );
-  }
+  useEffect(() =>
+    autorun(() => {
+      if (userStore.role === 'CUSTOMER' || userStore.role === '') {
+        setActions([...actions, <div />]);
+        return;
+      }
 
-  if (selectedCount > 0) {
-    actions.push(
-      <ServiceChangeActiveAction
-        activate={false}
-        key="deactivate_action"
-        services={selectedItemsData}
-      />
-    );
-    actions.push(
-      <ServiceChangeActiveAction
-        activate={true}
-        key="activate_action"
-        services={selectedItemsData}
-      />
-    );
-  }
+      const actions = [];
+      if (selectedCount === 1) {
+        actions.push(
+          <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
+        );
+      }
 
-  actions.push(<ServiceCreateAction key="create_action" />);
-  actions.push(<ServiceRefreshAction key="refresh_action" />);
+      if (selectedCount > 0) {
+        actions.push(
+          <ServiceChangeActiveAction
+            activate={false}
+            key="deactivate_action"
+            services={selectedItemsData}
+          />
+        );
+
+        actions.push(
+          <ServiceChangeActiveAction
+            activate={true}
+            key="activate_action"
+            services={selectedItemsData}
+          />
+        );
+      }
+
+      actions.push(<ServiceCreateAction key="create_action" />);
+      actions.push(<ServiceRefreshAction key="refresh_action" />);
+
+      setActions(actions);
+    }, [userStore.role])
+  );
 
   return <>{actions}</>;
 };
@@ -136,13 +155,16 @@ const ServiceEditAction = ({ pkg }) => {
 };
 
 const ServiceChangeActiveAction = ({ services, activate = false }) => {
+  const userStore = useUserStore();
   const serviceStore = useServiceStore();
   const [opened, setOpened] = useState(false);
+
+  const serviceAPI = new ServiceAPI(userStore.role);
 
   const handleAccept = async () => {
     await Promise.all(
       services.map(async (pkg) => {
-        await updateService({
+        await serviceAPI.updateService({
           ...pkg,
           active: activate,
         });

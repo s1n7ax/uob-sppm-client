@@ -11,7 +11,8 @@ import { useRoleStore } from '../store/RoleStore';
 import { useBranchStore } from '../store/BranchStore';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateEmployee } from '../api/organization';
+import { useUserStore } from '../store/UserStore';
+import EmployeeAPI from '../api/EmployeeAPI';
 
 const EmployeeManagement = () => {
   const empStore = useEmployeeStore();
@@ -139,12 +140,14 @@ const EmployeeCreateAction = () => {
 
 const EmployeeChangeActiveAction = ({ employees, activate = false }) => {
   const employeeStore = useEmployeeStore();
+  const userStore = useUserStore();
+  const employeeAPI = new EmployeeAPI(userStore.role);
   const [opened, setOpened] = useState(false);
 
   const handleAccept = async () => {
     await Promise.all(
       employees.map(async (emp) => {
-        await updateEmployee({
+        await employeeAPI.updateEmployee({
           ...emp,
           user: { ...emp.user, active: activate },
         });

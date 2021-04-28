@@ -8,9 +8,10 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { useObserver } from 'mobx-react-lite';
 import AcceptDialog from './AcceptDialog';
-import { updateItem, createItem } from '../api/organization';
 import ItemDialog from './ItemDialog';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useUserStore } from '../store/UserStore';
+import ItemAPI from '../api/ItemAPI';
 
 const ItemManagement = () => {
   const itemStore = useItemStore();
@@ -137,11 +138,13 @@ const ItemEditAction = ({ pkg: item }) => {
 const ItemChangeActiveAction = ({ items, activate = false }) => {
   const itemStore = useItemStore();
   const [opened, setOpened] = useState(false);
+  const userStore = useUserStore();
+  const itemAPI = new ItemAPI(userStore.role);
 
   const handleAccept = async () => {
     await Promise.all(
       items.map(async (item) => {
-        await updateItem({
+        await itemAPI.updateItem({
           ...item,
           active: activate,
         });

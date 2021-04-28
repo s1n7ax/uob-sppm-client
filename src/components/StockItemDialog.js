@@ -10,10 +10,11 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { updateStockItem, createStockItem } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import DialogWindow from './DialogWindow';
+import StockItemAPI from '../api/StockItemAPI';
+import { useUserStore } from '../store/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -61,6 +62,9 @@ const StockItemDialog = ({
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const stockItemAPI = new StockItemAPI(userStore.role);
+
   const handleSave = () => {
     (async () => {
       const newStockItem = {
@@ -72,8 +76,8 @@ const StockItemDialog = ({
       };
 
       edit
-        ? await updateStockItem(newStockItem)
-        : await createStockItem(newStockItem);
+        ? await stockItemAPI.updateStockItem(newStockItem)
+        : await stockItemAPI.createStockItem(newStockItem);
 
       onUpdate();
       args.closeWindow();

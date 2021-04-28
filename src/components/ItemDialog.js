@@ -7,12 +7,13 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { updateItem, createItem } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useItemStore } from '../store/ItemStore';
 import { notEmptyValidation } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import ItemAPI from '../api/ItemAPI';
+import { useUserStore } from '../store/UserStore';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -32,6 +33,8 @@ const ItemDialog = ({ edit, item, role, ...args }) => {
   item = item || getItemJson(role);
 
   const itemStore = useItemStore();
+  const userStore = useUserStore();
+  const itemAPI = new ItemAPI(userStore.role);
 
   const [name, setName] = useEVValueState(item.name);
   const [description, setDescription] = useEVValueState(item.description);
@@ -67,7 +70,9 @@ const ItemDialog = ({ edit, item, role, ...args }) => {
         createdDate: now,
       };
 
-      edit ? await updateItem(newItem) : await createItem(newItem);
+      edit
+        ? await itemAPI.updateItem(newItem)
+        : await itemAPI.createItem(newItem);
       await itemStore.refreshData();
       args.closeWindow();
     })();

@@ -11,6 +11,7 @@ import CategoryIcon from '@material-ui/icons/Category';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom';
 import { useUserStore } from '../store/UserStore';
 
@@ -60,17 +61,17 @@ const adminList = [
 const managerList = [
   {
     text: 'Dashboard',
-    url: '/dashboard',
+    url: '/app/dashboard',
     icon: <PeopleIcon />,
   },
   {
     text: 'Stock',
-    url: '/stock',
+    url: '/app/stock',
     icon: <PeopleIcon />,
   },
   {
     text: 'Customer Booking',
-    url: '/customer_booking',
+    url: '/app/customer_booking',
     icon: <PeopleIcon />,
   },
 ];
@@ -91,6 +92,14 @@ const stockList = [
 const createList = (list, onChange) => {
   return (
     <div>
+      <Link to={'/'}>
+        <ListItem button>
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
+      </Link>
       {list.map((item) => {
         return (
           <Link key={item.text} to={item.url}>
@@ -109,13 +118,13 @@ const MenuList = ({ onChange }) => {
   const store = useUserStore();
 
   switch (store.role) {
-    case 'admin':
+    case 'ADMIN':
       return createList(adminList, onChange);
 
-    case 'manager':
+    case 'MANAGER':
       return createList(managerList);
 
-    case 'stock':
+    case 'STOCK_KEEPER':
       return createList(stockList);
 
     default:

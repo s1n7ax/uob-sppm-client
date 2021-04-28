@@ -118,13 +118,15 @@ function TableOfContent({ title, headers, body, searchFilter }) {
             <option value="100">100</option>
           </Form.Control>
         </PaginationPageCountSelect>
-        <SearchContainer>
-          <InputGroup>
+        <SearchContainer color="secondary">
+          <InputGroup color="secondary">
             <FormControl
               onChange={(ev) => setSearchCriteria(ev.target.value)}
               aria-describedby="basic-addon1"
+              color="secondary"
+              variant="secondary"
             />
-            <InputGroup.Prepend>
+            <InputGroup.Prepend color="secondary">
               <Button variant="outline-secondary">
                 <ImSearch />
               </Button>

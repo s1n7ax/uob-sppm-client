@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getCurrentUserDetails } from '../api/organization';
+import UserDetailsAPI from '../api/UserDetailsAPI';
 
 const deleteAllCookies = () => {
   var cookies = document.cookie.split(';');
@@ -49,9 +49,11 @@ export const UserStoreProvider = ({ children }) => {
   useEffect(() => {
     const asyncCallback = async () => {
       try {
-        const user = await getCurrentUserDetails();
+        const userDetailsAPI = new UserDetailsAPI();
+        const user = await userDetailsAPI.getPublicUserDetails();
         store.setUserDetailsFromPublicUser(user);
       } catch (e) {
+        console.error(e);
         store.serUserDetails({
           username: '',
           firstName: '',

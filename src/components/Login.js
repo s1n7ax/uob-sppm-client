@@ -9,9 +9,9 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core';
 import { useSnackbarStore } from '../store/SnackbarStore';
 import { useHistory } from 'react-router';
-import { login } from '../api/login';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useUserStore } from '../store/UserStore';
+import Session from '../api/SessionAPI';
 
 const Container = styled.div`
   width: 30em;
@@ -41,10 +41,11 @@ function Login() {
     ev.preventDefault();
 
     try {
-      const user = await login(username, password);
-      userStore.setUserDetailsFromPublicUser(user);
-      snackbarStore.showSuccess(`Welcome ${user.firstName} ${user.lastName}!`);
+      const session = new Session();
+      const user = await session.login(username, password);
       history.push('/');
+      snackbarStore.showSuccess(`Welcome ${user.firstName} ${user.lastName}!`);
+      userStore.setUserDetailsFromPublicUser(user);
     } catch (e) {
       console.error(e);
       if (e.message === '401') {

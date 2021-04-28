@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { Observer, useObserver } from 'mobx-react-lite';
 import { autorun } from 'mobx';
 import { useSnackbarStore } from '../store/SnackbarStore';
-import { logout } from '../api/organization';
+import SessionAPI from '../api/SessionAPI';
 
 const Container = styled.div`
   margin: 0 5em 0 5em;
@@ -53,6 +53,7 @@ const Header = () => {
   const snackbarStore = useSnackbarStore();
   const history = useHistory();
   const [menus, setMenus] = useState([]);
+  const sessionAPI = new SessionAPI(userStore.role);
 
   const anyUserMenus = [
     { text: 'home', url: '/' },
@@ -69,12 +70,13 @@ const Header = () => {
       url: '/logout',
       onClick: async () => {
         try {
-          await logout();
+          await sessionAPI.logout();
+          history.push('/');
           userStore.logout();
           snackbarStore.showSuccess('Logged out successfully');
-          history.push('/');
         } catch (e) {
-          snackbarStore.showError('Logout failed');
+          console.error(e);
+          snackbarStore.showError('Logout failed due to unknown reason');
         }
       },
     },

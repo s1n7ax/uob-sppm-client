@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllServices } from '../api/organization';
+import { useUserStore } from '../store/UserStore';
+import ServiceAPI from '../api/ServiceAPI';
+import { autorun } from 'mobx';
 
 export const ServiceContext = createContext();
 
 export const ServiceStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
+  const allowedRoles = ['ADMIN', 'MANAGER', 'CUSTOMER', ''];
+
   const store = useLocalObservable(() => ({
     services: [],
 
@@ -17,13 +22,20 @@ export const ServiceStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.services = await getAllServices();
+      if (allowedRoles.includes(userStore.role)) {
+        const serviceAPI = new ServiceAPI(userStore.role);
+        this.services = await serviceAPI.getAllServices();
+      } else {
+        this.services = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
+  );
 
   return (
     <ServiceContext.Provider value={store}>{children}</ServiceContext.Provider>

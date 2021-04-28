@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect } from 'react';
 import { useLocalObservable } from 'mobx-react-lite';
-import { getAllItems } from '../api/organization';
+import { useUserStore } from '../store/UserStore';
+import ItemAPI from '../api/ItemAPI';
+import { autorun } from 'mobx';
 
 export const ItemContext = createContext();
 
 export const ItemStoreProvider = ({ children }) => {
+  const userStore = useUserStore();
+  const allowedRoles = ['ADMIN'];
+
   const store = useLocalObservable(() => ({
     items: [],
 
@@ -17,13 +22,21 @@ export const ItemStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      this.items = await getAllItems();
+      if (allowedRoles.includes(userStore.role)) {
+        console.log('>>>>>>> includes', userStore.role);
+        const itemAPI = new ItemAPI(userStore.role);
+        this.items = await itemAPI.getAllItems();
+      } else {
+        this.items = [];
+      }
     },
   }));
 
-  useEffect(() => {
-    store.refreshData();
-  });
+  useEffect(() =>
+    autorun(() => {
+      store.refreshData();
+    })
+  );
 
   return <ItemContext.Provider value={store}>{children}</ItemContext.Provider>;
 };

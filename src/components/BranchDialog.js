@@ -7,16 +7,17 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { updateBranch, createBranch } from '../api/organization';
 import { useEVCheckedState } from '../hooks/useEVCheckedState';
 import { useEVValueState } from '../hooks/useEVValueState';
 import { useBranchStore } from '../store/BranchStore';
+import { useUserStore } from '../store/UserStore';
 import {
   notEmptyValidation,
   contactValidation,
   emailValidation,
 } from '../validation/form-validation';
 import DialogWindow from './DialogWindow';
+import BranchAPI from '../api/BranchAPI';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -64,6 +65,9 @@ const BranchDialog = ({ edit, branch, role, ...args }) => {
     return Object.entries(errors).some(([_key, value]) => value.error);
   };
 
+  const userStore = useUserStore();
+  const branchAPI = new BranchAPI(userStore.role);
+
   const handleSave = () => {
     const now = new Date();
     (async () => {
@@ -77,7 +81,9 @@ const BranchDialog = ({ edit, branch, role, ...args }) => {
         createdDate: now,
       };
 
-      edit ? await updateBranch(newBranch) : await createBranch(newBranch);
+      edit
+        ? await branchAPI.updateBranch(newBranch)
+        : await branchAPI.createBranch(newBranch);
       await branchStore.refreshData();
       args.closeWindow();
     })();
