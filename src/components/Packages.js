@@ -46,10 +46,10 @@ const ActionBar = ({ selected }) => {
   useEffect(
     () =>
       autorun(() => {
+        console.log('rendering::packages');
         let actions = [];
 
         if (userStore.role === 'CUSTOMER' || userStore.role === '') {
-          setActions([<div />]);
           return;
         }
 
@@ -81,7 +81,7 @@ const ActionBar = ({ selected }) => {
 
         setActions(actions);
       }),
-    [userStore.role]
+    []
   );
 
   return <>{actions}</>;

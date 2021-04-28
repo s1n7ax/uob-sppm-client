@@ -129,7 +129,7 @@ const CustomerAppointmentDialog = ({
 
   const ActionBar = () => {
     return (
-      <Button disabled={hasErrors()} onClick={handleSave} color="primary">
+      <Button disabled={hasErrors()} onClick={handleSave} color="secondary">
         Save changes
       </Button>
     );

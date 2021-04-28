@@ -23,8 +23,6 @@ export const SaleStoreProvider = ({ children }) => {
           saleAPI.getTodaySales(),
         ]);
 
-        console.log('sales >>', sales);
-        console.log('today sales >>', todaySales);
 
         this.sales = sales;
         this.todaySales = todaySales;

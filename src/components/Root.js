@@ -16,7 +16,8 @@ import Sales from './Sales';
 import Branches from './Branches';
 import ImageGallery from './Gallery';
 import Stocks from './Stocks';
-import Appointments from './CustomerAppointments';
+import CustomerAppointmentManagement from './CustomerAppointmentManagement';
+import CustomerAppointments from './CustomerAppointments';
 
 import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { Container, makeStyles } from '@material-ui/core';
@@ -130,7 +131,7 @@ const Root = () => {
       component: (
         <Spacer>
           <Container className={classes.container}>
-            <Appointments />
+            <CustomerAppointments />
           </Container>
         </Spacer>
       ),
@@ -170,6 +171,10 @@ const Root = () => {
     {
       path: '/app/services',
       component: <Services />,
+    },
+    {
+      path: '/app/customer_booking',
+      component: <CustomerAppointmentManagement />,
     },
   ];
 

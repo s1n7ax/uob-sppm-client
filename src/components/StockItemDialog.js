@@ -42,8 +42,8 @@ const StockItemDialog = ({
   stock = stock || getStockItemJson(role);
 
   const [count, setCount] = useEVValueState(stock.count);
-  const [branchId, setBranchId] = useEVValueState(stock.branch.id);
-  const [itemId, setItemId] = useEVValueState(stock.item.id);
+  const [branchId, setBranchId] = useEVValueState(branchList[0].id);
+  const [itemId, setItemId] = useEVValueState(itemList[0].id);
   const [active, setActive] = useEVCheckedState(stock.active);
 
   const classes = useStyles();
@@ -97,7 +97,7 @@ const StockItemDialog = ({
       <form className={classes.root} noValidate autoComplete="off">
         <FormControl className={classes.formControl}>
           <InputLabel>Branch</InputLabel>
-          <Select onChange={setBranchId} value={branchId}>
+          <Select onChange={setBranchId} defaultValue={branchId}>
             {branchList.map((branch) => (
               <MenuItem key={branch.id} value={branch.id}>
                 {branch.location}
@@ -108,7 +108,7 @@ const StockItemDialog = ({
 
         <FormControl className={classes.formControl}>
           <InputLabel>Item</InputLabel>
-          <Select onChange={setItemId} value={itemId}>
+          <Select onChange={setItemId} defaultValue={itemId}>
             {itemList.map((item) => (
               <MenuItem key={item.id} value={item.id}>
                 {item.name}
@@ -147,6 +147,7 @@ const getStockItemJson = () => {
     branch: {},
     item: {},
     count: 0,
+    active: true,
     createdDate: new Date(),
   };
 };

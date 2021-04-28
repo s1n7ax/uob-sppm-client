@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
+  console.log('rendering::EmployeeDialog');
   if (edit && !employee)
     throw new Error('Edit window require the employee data');
 

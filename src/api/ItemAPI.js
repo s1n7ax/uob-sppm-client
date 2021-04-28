@@ -5,6 +5,12 @@ const localConfig = {
   admin: {
     item: '/org/item',
   },
+  stock_keeper: {
+    item: '/org/item',
+  },
+  manager: {
+    item: '/org/item',
+  },
 };
 
 export default class Item {

@@ -8,7 +8,7 @@ export const CustomerAppointmentContext = createContext();
 
 export const CustomerAppointmentStoreProvider = ({ children }) => {
   const userStore = useUserStore();
-  const allowedRoles = ['CUSTOMER'];
+  const allowedRoles = ['ADMIN', 'MANAGER', 'CUSTOMER'];
 
   const store = useLocalObservable(() => ({
     appointments: [],

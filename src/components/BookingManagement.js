@@ -67,8 +67,6 @@ const ActionBar = ({ selected }) => {
     );
   }
 
-  actions.push(<BookingCreateAction key="create_action" />);
-
   return <>{actions}</>;
 };
 

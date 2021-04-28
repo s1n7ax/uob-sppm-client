@@ -8,7 +8,7 @@ export const BranchContext = createContext();
 
 export const BranchStoreProvider = ({ children }) => {
   const userStore = useUserStore();
-  const allowedRoles = ['ADMIN', 'MANAGEMENT', 'CUSTOMER'];
+  const allowedRoles = ['ADMIN', 'MANAGER', 'CUSTOMER'];
 
   const store = useLocalObservable(() => ({
     branches: [],

@@ -8,7 +8,7 @@ export const ItemContext = createContext();
 
 export const ItemStoreProvider = ({ children }) => {
   const userStore = useUserStore();
-  const allowedRoles = ['ADMIN'];
+  const allowedRoles = ['ADMIN', 'MANAGER', 'STOCK_KEEPER'];
 
   const store = useLocalObservable(() => ({
     items: [],
@@ -23,7 +23,6 @@ export const ItemStoreProvider = ({ children }) => {
 
     async refreshData() {
       if (allowedRoles.includes(userStore.role)) {
-        console.log('>>>>>>> includes', userStore.role);
         const itemAPI = new ItemAPI(userStore.role);
         this.items = await itemAPI.getAllItems();
       } else {

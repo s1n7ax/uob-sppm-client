@@ -106,6 +106,11 @@ const StockRefreshAction = () => {
 
 const StockCreateAction = ({ onUpdate }) => {
   const [opened, setOpened] = useState(false);
+  const branchStore = useBranchStore();
+  const itemStore = useItemStore();
+
+  console.log(branchStore.branches);
+  console.log(branchStore.branches.length);
 
   return (
     <>
@@ -118,6 +123,8 @@ const StockCreateAction = ({ onUpdate }) => {
       {opened && (
         <StockItemDialog
           onUpdate={onUpdate}
+          branchList={branchStore.branches}
+          itemList={itemStore.items}
           edit={false}
           isOpened={opened}
           closeWindow={() => setOpened(false)}
@@ -197,8 +204,8 @@ const StockChangeActiveAction = ({
             <div>
               <span>{`Do you want to deactivate following packages?`}</span>
               <ul>
-                {stockItems.map((pkg) => (
-                  <li key={pkg.id}>{`${pkg.name}`}</li>
+                {stockItems.map((stock) => (
+                  <li key={stock.id}>{`${stock.item.name}`}</li>
                 ))}
               </ul>
             </div>

@@ -22,7 +22,6 @@ export const PackageStoreProvider = ({ children }) => {
     },
 
     async refreshData() {
-      console.log(allowedRoles);
       if (allowedRoles.includes(userStore.role)) {
         const packageAPI = new PackageAPI(userStore.role);
         this.packages = await packageAPI.getAllPackages();
@@ -32,10 +31,12 @@ export const PackageStoreProvider = ({ children }) => {
     },
   }));
 
-  useEffect(() =>
-    autorun(() => {
-      store.refreshData();
-    })
+  useEffect(
+    () =>
+      autorun(() => {
+        store.refreshData();
+      }),
+    [userStore.role]
   );
 
   return (

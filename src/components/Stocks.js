@@ -38,7 +38,7 @@ const Stocks = () => {
 
   // styles
   const classes = useStyles();
-  const allowedRoles = ['ADMIN', 'MANAGER'];
+  const allowedRoles = ['ADMIN', 'MANAGER', 'STOCK_KEEPER'];
 
   const updateStockItems = async () => {
     if (!allowedRoles.includes(userStore.role)) return;
@@ -69,7 +69,7 @@ const Stocks = () => {
       autorun(() => {
         updateStockItems();
       }),
-    [userStore.role, branchId]
+    []
   );
 
   const handleStockItemChange = () => {

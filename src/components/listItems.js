@@ -42,6 +42,11 @@ const adminList = [
     icon: <PlaylistAddIcon />,
   },
   {
+    text: 'Customer Booking',
+    url: '/app/customer_booking',
+    icon: <PeopleIcon />,
+  },
+  {
     text: 'Branches',
     url: '/app/branches',
     icon: <DeviceHubIcon />,
@@ -62,12 +67,12 @@ const managerList = [
   {
     text: 'Dashboard',
     url: '/app/dashboard',
-    icon: <PeopleIcon />,
+    icon: <DashboardIcon />,
   },
   {
     text: 'Stock',
     url: '/app/stock',
-    icon: <PeopleIcon />,
+    icon: <AddToPhotosIcon />,
   },
   {
     text: 'Customer Booking',
@@ -122,10 +127,10 @@ const MenuList = ({ onChange }) => {
       return createList(adminList, onChange);
 
     case 'MANAGER':
-      return createList(managerList);
+      return createList(managerList, onChange);
 
     case 'STOCK_KEEPER':
-      return createList(stockList);
+      return createList(stockList, onChange);
 
     default:
       return <div></div>;

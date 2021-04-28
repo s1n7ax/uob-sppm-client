@@ -17,6 +17,7 @@ export default class Sale {
 
     if (!userConfig) throw new Error('local config not found for user ' + user);
 
+    this.userConfig = userConfig;
     this.client = new HttpClient(config.base_url, userConfig.sale);
   }
 
@@ -39,10 +40,12 @@ export default class Sale {
   }
 
   getAllBranchSales(from, to) {
-    if (from || to)
+    if (from || to) {
+
       return this.getClient(this.userConfig.branchSale).get({
         queries: { from, to },
       });
+    }
 
     return this.getClient(this.userConfig.branchSale).get();
   }

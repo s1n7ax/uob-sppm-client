@@ -59,18 +59,16 @@ const Sales = () => {
   const createRow = (branchSale) => {
     return {
       branch: branchSale.branch.location,
-      date: getYMD(branchSale.createdDate),
-      amount: getAmountFromSale(branchSale),
+      date: getYMD(branchSale.date),
+      amount: branchSale.amount,
     };
   };
 
   const calculatePieChartData = (branchSales) => {
-    console.log('branch sales>>', branchSales);
-
     const branchSalesMap = {};
 
     branchSales
-      .map((i) => ({ branch: i.branch.location, amount: getAmountFromSale(i) }))
+      .map((i) => ({ branch: i.branch.location, amount: i.amount }))
       .forEach((i) => {
         if (!branchSalesMap[i.branch]) branchSalesMap[i.branch] = 0;
 
@@ -109,10 +107,15 @@ const Sales = () => {
         const asyncCall = async () => {
           if (!allowedRoles.includes(userStore.role)) return;
           const saleAPI = new SaleAPI(userStore.role);
+          /*
           const [dailySales, branchSales] = await Promise.all([
             saleAPI.getDailySales(fromDate, toDate),
             saleAPI.getAllBranchSales(fromDate, toDate),
           ]);
+					*/
+
+          const dailySales = await saleAPI.getDailySales(fromDate, toDate);
+          const branchSales = await saleAPI.getAllBranchSales(fromDate, toDate);
 
           setCharData(
             dailySales.map((i) => ({

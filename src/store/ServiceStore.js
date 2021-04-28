@@ -31,10 +31,12 @@ export const ServiceStoreProvider = ({ children }) => {
     },
   }));
 
-  useEffect(() =>
-    autorun(() => {
-      store.refreshData();
-    })
+  useEffect(
+    () =>
+      autorun(() => {
+        store.refreshData();
+      }),
+    [userStore.role]
   );
 
   return (

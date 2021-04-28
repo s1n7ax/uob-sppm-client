@@ -15,6 +15,7 @@ import ServiceAPI from '../api/ServiceAPI';
 import { autorun } from 'mobx';
 
 const Services = () => {
+  console.log('services');
   const userStore = useUserStore();
   const serviceStore = useServiceStore();
 
@@ -44,43 +45,45 @@ const ActionBar = ({ selected }) => {
   const selectedCount = selected.length;
   const [actions, setActions] = useState([]);
 
-  useEffect(() =>
-    autorun(() => {
-      if (userStore.role === 'CUSTOMER' || userStore.role === '') {
-        setActions([...actions, <div />]);
-        return;
-      }
+  useEffect(
+    () =>
+      autorun(() => {
+        console.log('rendering::services');
+        if (userStore.role === 'CUSTOMER' || userStore.role === '') {
+          return;
+        }
 
-      const actions = [];
-      if (selectedCount === 1) {
-        actions.push(
-          <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
-        );
-      }
+        const actions = [];
+        if (selectedCount === 1) {
+          actions.push(
+            <ServiceEditAction key="edit_action" pkg={selectedItemsData[0]} />
+          );
+        }
 
-      if (selectedCount > 0) {
-        actions.push(
-          <ServiceChangeActiveAction
-            activate={false}
-            key="deactivate_action"
-            services={selectedItemsData}
-          />
-        );
+        if (selectedCount > 0) {
+          actions.push(
+            <ServiceChangeActiveAction
+              activate={false}
+              key="deactivate_action"
+              services={selectedItemsData}
+            />
+          );
 
-        actions.push(
-          <ServiceChangeActiveAction
-            activate={true}
-            key="activate_action"
-            services={selectedItemsData}
-          />
-        );
-      }
+          actions.push(
+            <ServiceChangeActiveAction
+              activate={true}
+              key="activate_action"
+              services={selectedItemsData}
+            />
+          );
+        }
 
-      actions.push(<ServiceCreateAction key="create_action" />);
-      actions.push(<ServiceRefreshAction key="refresh_action" />);
+        actions.push(<ServiceCreateAction key="create_action" />);
+        actions.push(<ServiceRefreshAction key="refresh_action" />);
 
-      setActions(actions);
-    }, [userStore.role])
+        setActions(actions);
+      }),
+    []
   );
 
   return <>{actions}</>;
