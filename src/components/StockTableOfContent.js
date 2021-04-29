@@ -109,8 +109,6 @@ const StockCreateAction = ({ onUpdate }) => {
   const branchStore = useBranchStore();
   const itemStore = useItemStore();
 
-  console.log(branchStore.branches);
-  console.log(branchStore.branches.length);
 
   return (
     <>

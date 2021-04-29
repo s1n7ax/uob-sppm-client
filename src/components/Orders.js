@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,6 +8,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
 const useStyles = makeStyles((theme) => ({
+  table: {
+    height: 'auto',
+    padding: 2,
+  },
   seeMore: {
     marginTop: theme.spacing(3),
   },
@@ -26,23 +29,19 @@ export default function Orders({ rows }) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Branch</TableCell>
-            <TableCell align="right">Contact</TableCell>
-            <TableCell align="right">Amount</TableCell>
+            <TableCell>Branch</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Contact</TableCell>
+            <TableCell>Amount</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.name}>
-              <TableCell
-                className={classes.capitalize}
-                component="th"
-                scope="row"
-              >
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.contact}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.email}</TableCell>
+              <TableCell>{row.contact}</TableCell>
+              <TableCell>{row.amount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

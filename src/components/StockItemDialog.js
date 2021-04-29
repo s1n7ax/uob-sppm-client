@@ -41,10 +41,13 @@ const StockItemDialog = ({
 
   stock = stock || getStockItemJson(role);
 
+  const currentBranch = (stock.branch && stock.branch.id) || branchList[0].id;
+  const currentItem = (stock.item && stock.item.id) || itemList[0].id;
+
   const [count, setCount] = useEVValueState(stock.count);
-  const [branchId, setBranchId] = useEVValueState(branchList[0].id);
-  const [itemId, setItemId] = useEVValueState(itemList[0].id);
-  const [active, setActive] = useEVCheckedState(stock.active);
+  const [branchId, setBranchId] = useEVValueState(currentBranch);
+  const [itemId, setItemId] = useEVValueState(currentItem);
+  const [active, setActive] = useEVCheckedState(stock.active || true);
 
   const classes = useStyles();
 
@@ -86,7 +89,7 @@ const StockItemDialog = ({
 
   const ActionBar = () => {
     return (
-      <Button disabled={hasErrors()} onClick={handleSave} color="primary">
+      <Button disabled={hasErrors()} onClick={handleSave} color="secondary">
         Save changes
       </Button>
     );

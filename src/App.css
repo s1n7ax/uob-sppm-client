@@ -14,7 +14,7 @@
 }
 
 :root {
-  --font-family: Poppins;
+  --font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   --primary-color: rgb(255, 51, 146);
 }
 

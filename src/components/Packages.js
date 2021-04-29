@@ -46,7 +46,6 @@ const ActionBar = ({ selected }) => {
   useEffect(
     () =>
       autorun(() => {
-        console.log('rendering::packages');
         let actions = [];
 
         if (userStore.role === 'CUSTOMER' || userStore.role === '') {

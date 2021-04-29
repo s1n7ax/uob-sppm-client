@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
-  console.log('rendering::EmployeeDialog');
   if (edit && !employee)
     throw new Error('Edit window require the employee data');
 
@@ -148,7 +147,7 @@ const EmployeeDialog = ({ edit, employee, branchList, roleList, ...args }) => {
 
   const ActionBar = () => {
     return (
-      <Button disabled={hasErrors()} onClick={handleSave} color="primary">
+      <Button disabled={hasErrors()} onClick={handleSave} color="secondary">
         Save changes
       </Button>
     );

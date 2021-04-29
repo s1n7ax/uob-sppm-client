@@ -70,6 +70,7 @@ const Dashboard = () => {
             });
 
             let branchName = sale.branch.location;
+            let branchEmail = sale.branch.email;
             let contact = sale.branch.contact;
             let amount = saleTotal;
 
@@ -77,6 +78,7 @@ const Dashboard = () => {
 
             currBranch = currBranch || {};
             currBranch.name = branchName;
+            currBranch.email = branchEmail;
             currBranch.contact = contact;
             currBranch.amount = (currBranch.amount || 0) + amount;
 
@@ -84,7 +86,13 @@ const Dashboard = () => {
           }, []);
 
           setTotalIncome(totalIncome);
-          setCharData(chartData);
+          setCharData(
+            chartData.sort((i, j) => {
+              if (i.time > j.time) return 1;
+              if (i.time < j.time) return -1;
+              return 0;
+            })
+          );
           setBranchIncomes(
             Object.entries(branchIncomes).map(([_, value]) => {
               return value;
@@ -94,6 +102,8 @@ const Dashboard = () => {
       }),
     [saleStore.sales, saleStore.todaySales]
   );
+
+  console.log(chartData);
 
   return (
     <>
@@ -114,24 +124,8 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Box pt={4}>
-        <Copyright />
-      </Box>
     </>
   );
 };
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 export default Dashboard;

@@ -72,6 +72,10 @@ const Stocks = () => {
     []
   );
 
+  useEffect(() => {
+    updateStockItems();
+  }, [branchId]);
+
   const handleStockItemChange = () => {
     updateStockItems();
   };
@@ -79,7 +83,7 @@ const Stocks = () => {
   return useObserver(() => (
     <>
       <Grid container spacing={3}>
-        {userStore.role === 'admin' && (
+        {userStore.role === 'ADMIN' && (
           <Grid item xs={12}>
             <Paper className={classes.datePickerPaper}>
               <FormControl className={classes.formControl}>

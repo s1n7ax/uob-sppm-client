@@ -48,7 +48,7 @@ function Login() {
       userStore.setUserDetailsFromPublicUser(user);
     } catch (e) {
       console.error(e);
-      if (e.message === '401') {
+      if (e.message === '401' || e.message === '403') {
         snackbarStore.showError('Invalid username or password');
       } else {
         snackbarStore.showError('Failed to login due to unknown error');

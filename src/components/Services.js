@@ -15,7 +15,6 @@ import ServiceAPI from '../api/ServiceAPI';
 import { autorun } from 'mobx';
 
 const Services = () => {
-  console.log('services');
   const userStore = useUserStore();
   const serviceStore = useServiceStore();
 
@@ -48,7 +47,6 @@ const ActionBar = ({ selected }) => {
   useEffect(
     () =>
       autorun(() => {
-        console.log('rendering::services');
         if (userStore.role === 'CUSTOMER' || userStore.role === '') {
           return;
         }

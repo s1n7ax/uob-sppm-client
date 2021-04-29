@@ -4,7 +4,7 @@ import HttpClient from './HttpClient';
 const localConfig = {
   admin: {
     stockItem: '/org/stock_item',
-    branchStockItem: '/branch/${branchId}/stock_item',
+    branchStockItem: '/org/branch/${branchId}/stock_item',
   },
 
   manager: {
@@ -18,11 +18,12 @@ export default class StockItem {
 
     if (!userConfig) throw new Error('local config not found for user ' + user);
 
+    this.userConfig = userConfig;
     this.client = new HttpClient(config.base_url, userConfig.stockItem);
   }
 
   getClient(resource) {
-    this.client = new HttpClient(config.base_url, resource);
+    return new HttpClient(config.base_url, resource);
   }
 
   getAllInStock() {
