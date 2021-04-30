@@ -1,9 +1,17 @@
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import Card from 'react-bootstrap/Card';
 import CenterLayout from './CenterLayout';
-//import { H1 } from './Title';
+
+const useStyles = makeStyles(() => ({
+  card: {
+    margin: 10,
+  },
+
+}))
 
 function CardSet({ title, data }) {
+  const classes = useStyles();
+
   return (
     <Grid container justify="space-around">
       <Grid item xs={12}>
@@ -14,7 +22,7 @@ function CardSet({ title, data }) {
       {data.map((card, index) => {
         return (
           <Grid key={index} item xs={12} sm={3}>
-            <Card>
+            <Card className={classes.card}>
               <Card.Img variant="top" src={card.src} />
               <Card.Body>
                 <Card.Title>{card.title}</Card.Title>

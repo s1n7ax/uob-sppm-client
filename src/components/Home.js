@@ -13,7 +13,14 @@ import img5 from '../images/sliders/general/5.webp';
 import sv1 from '../images/services/1.webp';
 import sv2 from '../images/services/2.webp';
 import sv3 from '../images/services/3.webp';
+import sv4 from '../images/services/4.webp';
+
+import pkg1 from '../images/packages/1.webp';
+import pkg2 from '../images/packages/2.webp';
+import pkg3 from '../images/packages/3.webp';
+
 import { Container, makeStyles } from '@material-ui/core';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,40 +44,38 @@ function Home() {
       src: sv1,
       alt: 'services',
       title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
     },
     {
       src: sv2,
       alt: 'services',
-      title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
+      title: 'Threading',
     },
     {
       src: sv3,
       alt: 'services',
-      title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
+      title: 'Hair Coloring',
+    }, {
+      src: sv4,
+      alt: 'services',
+      title: 'Hair Treatment',
     },
   ];
 
   let packageCards = [
     {
-      src: sv1,
-      alt: 'services',
-      title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
+      src: pkg1,
+      alt: 'packages',
+      title: 'Bridal Dressing',
     },
     {
-      src: sv2,
-      alt: 'services',
-      title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
+      src: pkg2,
+      alt: 'packages',
+      title: 'Party Dressing',
     },
     {
-      src: sv3,
-      alt: 'services',
-      title: 'Nail Arts',
-      details: 'Nail Arts aaaaaaaaaaaaaaa',
+      src: pkg3,
+      alt: 'packages',
+      title: 'Corporate Grooming',
     },
   ];
 

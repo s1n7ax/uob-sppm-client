@@ -228,7 +228,7 @@ const Root = () => {
                 <SwitchTransition>
                   <CSSTransition
                     key={location.pathname}
-                    timeout={300}
+                    timeout={100}
                     classNames="fade"
                   >
                     <Switch location={location}>

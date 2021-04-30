@@ -6,7 +6,7 @@ function ImageSlider({ data }) {
   return (
     <Carousel
       autoPlay
-      interval={1000}
+      interval={3000}
       infiniteLoop
       showThumbs={false}
       showStatus={false}

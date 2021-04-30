@@ -19,6 +19,7 @@ import img9 from '../images/gallery/9.webp';
 import img10 from '../images/gallery/10.webp';
 import img11 from '../images/gallery/11.webp';
 import img12 from '../images/gallery/12.webp';
+import { Container, Paper } from '@material-ui/core';
 
 const images = [
   img1,
@@ -54,15 +55,45 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: 'white',
   },
+  container: {
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+  },
+  gridListTyle: {
+  },
+  image: {
+    backgroundColor: 'yellow',
+    boxShadow: '10px 10px',
+  }
+
+
 }));
 
-const randomBoolean = () => Math.random() < 0.5;
+const randomBoolean = () => {
+  let count = 1
+
+  return () => {
+    let value = false
+
+    if (count % 3 === 0) {
+      value = true;
+    }
+
+    count += 1;
+
+    return value;
+  }
+}
+
+
+
+const getRand = randomBoolean();
 
 const tileData = images.map((img) => ({
   img,
   title: 'Image',
   author: 'test',
-  featured: randomBoolean(),
+  featured: getRand(),
 }));
 
 export default function AdvancedGridList() {
@@ -70,22 +101,25 @@ export default function AdvancedGridList() {
 
   return (
     <div className={classes.root}>
-      <GridList cellHeight={500} spacing={10} className={classes.gridList}>
-        {tileData.map((tile) => (
-          <GridListTile
-            key={tile.img}
-            cols={tile.featured ? 2 : 1}
-            rows={tile.featured ? 2 : 1}
-          >
-            <img src={tile.img} alt={tile.title} />
-            <GridListTileBar
-              titlePosition="top"
-              actionPosition="left"
-              className={classes.titleBar}
-            />
-          </GridListTile>
-        ))}
-      </GridList>
+      <Container className={classes.container}>
+        <GridList cellHeight={300} cols={3} spacing={20} className={classes.gridList}>
+          {tileData.map((tile) => (
+            <GridListTile
+              key={tile.img}
+              cols={tile.featured ? 2 : 1}
+              rows={tile.featured ? 2 : 1}
+              className={classes.gridListTyle}
+            >
+              <img className={classes.image} src={tile.img} alt={tile.title} />
+              <GridListTileBar
+                titlePosition="top"
+                actionPosition="left"
+                className={classes.titleBar}
+              />
+            </GridListTile>
+          ))}
+        </GridList>
+      </Container>
     </div>
   );
 }

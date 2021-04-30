@@ -61,7 +61,6 @@ const Header = () => {
     { text: 'services', url: '/services' },
     { text: 'packages', url: '/packages' },
     { text: 'gallery', url: '/gallery' },
-    { text: 'contact us', url: '/contact_us' },
   ];
 
   const loggedInUserMenus = [
@@ -189,7 +188,7 @@ const Header = () => {
       </Navbar.Collapse>
     </Navbar>
   ));
-	*/
+  */
 };
 
 export default Header;

@@ -9,6 +9,9 @@ const localConfig = {
   customer: {
     customer: '/customer',
   },
+  '': {
+    customer: '/org/customer',
+  },
 };
 
 export default class Customer {
